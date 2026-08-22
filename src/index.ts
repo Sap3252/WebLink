@@ -3,6 +3,7 @@ import { connectDB } from "./config/db.js";
 import { env } from "./config/env.js";
 import authRoutes from "./routes/auth.routes.js";
 import postRoutes from "./routes/post.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 const app = express();
 const PORT = env.port;
@@ -16,6 +17,8 @@ app.get("/health", (_req, res) => {
 app.use("/api/auth", authRoutes);
 
 app.use("/api/posts", postRoutes);
+
+app.use("/api/users", userRoutes);
 
 try {
 await connectDB();
