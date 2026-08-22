@@ -1,10 +1,11 @@
 import express from "express";
 import { connectDB } from "./config/db.js";
-import { env } from "node:process";
+import { env } from "./config/env.js";
 import authRoutes from "./routes/auth.routes.js";
+import postRoutes from "./routes/post.routes.js";
 
 const app = express();
-const PORT = Number(env.port ?? 3000);
+const PORT = env.port;
 
 app.use(express.json());
 
@@ -12,7 +13,9 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
+
+app.use("/api/posts", postRoutes);
 
 try {
 await connectDB();
