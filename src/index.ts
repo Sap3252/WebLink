@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.routes.js";
 import postRoutes from "./routes/post.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import feedRoutes from "./routes/feed.routes.js";
+import cors from "cors";
 
 const app = express();
 const PORT = env.port;
@@ -14,6 +15,9 @@ app.use(express.json());
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
+app.use(cors({origin: env.corsOrigin}));
+
+app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 

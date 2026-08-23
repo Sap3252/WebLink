@@ -2,9 +2,7 @@ import type { Request, Response } from "express";
 import type { QueryFilter } from "mongoose";
 import Follow from "../models/Follow.js";
 import Post, { type IPost } from "../models/Post.js";
-
-const DEFAULT_LIMIT = 20;
-const MAX_LIMIT = 50;
+import { parseCursorParams, nextCursorOf } from "../utils/pagination.js";
 
 export async function getFeed(req: Request, res: Response): Promise<void> {
     const userId = req.userId;
@@ -14,26 +12,11 @@ export async function getFeed(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    const rawLimit = Number(req.query.limit);
-    const limit = Number.isInteger(rawLimit) && rawLimit > 0
-        ? Math.min(rawLimit, MAX_LIMIT)
-        : DEFAULT_LIMIT;
+    const page = parseCursorParams(req);
 
-    const before = req.query.before;
-    let cursor: Date | undefined;
-
-    if (before !== undefined) {
-        if (typeof before !== "string") {
-            res.status(400).json({ error: "before must be a single ISO date" });
-            return;
-        }
-
-        cursor = new Date(before);
-
-        if (Number.isNaN(cursor.getTime())) {
-            res.status(400).json({ error: "before must be a valid ISO date" });
-            return;
-        }
+    if (!page) {
+        res.status(400).json({ error: "Invalid pagination parameters" });
+        return;
     }
 
     try {
@@ -44,21 +27,16 @@ export async function getFeed(req: Request, res: Response): Promise<void> {
 
         const filter: QueryFilter<IPost> = { author: { $in: authors } };
 
-        if (cursor) {
-            filter.createdAt = { $lt: cursor };
+        if (page.cursor) {
+            filter.createdAt = { $lt: page.cursor };
         }
 
         const posts = await Post.find(filter)
             .sort({ createdAt: -1 })
-            .limit(limit)
+            .limit(page.limit)
             .populate("author", "username bio");
 
-        const last = posts.at(-1);
-
-        res.json({
-            posts,
-            nextCursor: posts.length === limit && last ? last.createdAt.toISOString() : null
-        });
+        res.json({ posts, nextCursor: nextCursorOf(posts, page.limit) });
     } catch (error) {
         console.error("getFeed failed:", error);
         res.status(500).json({ error: "Internal server error" });

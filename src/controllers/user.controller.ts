@@ -1,7 +1,10 @@
 import type { Request, Response } from "express";
 import mongoose from "mongoose";
+import type { QueryFilter } from "mongoose";
 import Follow from "../models/Follow.js";
 import User from "../models/User.js";
+import Post, { type IPost } from "../models/Post.js";
+import { parseCursorParams, nextCursorOf } from "../utils/pagination.js";
 
 function isDuplicateKeyError(error: unknown): boolean {
     return typeof error === "object" && error !== null &&
@@ -138,6 +141,114 @@ export async function updateMe(req: Request, res: Response): Promise<void> {
         }
 
         console.error("updateMe failed:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+export async function getUserProfile(req: Request, res: Response): Promise<void> {
+    const username = req.params.username;
+
+    if (typeof username !== "string") {
+        res.status(400).json({ error: "Invalid username" });
+        return;
+    }
+
+    try {
+        const user = await User.findOne({ username: username.trim() });
+
+        if (!user) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+
+        const viewer = req.userId;
+
+        const [followers, following, follow] = await Promise.all([
+            Follow.countDocuments({ following: user._id }),
+            Follow.countDocuments({ follower: user._id }),
+            viewer ? Follow.exists({ follower: viewer, following: user._id }) : null
+        ]);
+
+        res.json({
+            ...user.toJSON(),
+            followers,
+            following,
+            isFollowing: viewer ? Boolean(follow) : null
+        });
+    } catch (error) {
+        console.error("getUserProfile failed:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+export async function getUserPosts(req: Request, res: Response): Promise<void> {
+    const username = req.params.username;
+
+    if (typeof username !== "string") {
+        res.status(400).json({ error: "Invalid username" });
+        return;
+    }
+
+    const page = parseCursorParams(req);
+
+    if (!page) {
+        res.status(400).json({ error: "Invalid pagination parameters" });
+        return;
+    }
+
+    try {
+        const user = await User.findOne({ username: username.trim() }).select("_id").lean();
+
+        if (!user) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+
+        const filter: QueryFilter<IPost> = { author: user._id };
+
+        if (page.cursor) {
+            filter.createdAt = { $lt: page.cursor };
+        }
+
+        const posts = await Post.find(filter)
+            .sort({ createdAt: -1 })
+            .limit(page.limit)
+            .populate("author", "username bio");
+
+        res.json({ posts, nextCursor: nextCursorOf(posts, page.limit) });
+    } catch (error) {
+        console.error("getUserPosts failed:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+export async function getFollowers(req: Request, res: Response): Promise<void> {
+    await listRelations(req, res, "followers");
+}
+
+export async function getFollowing(req: Request, res: Response): Promise<void> {
+    await listRelations(req, res, "following");
+}
+
+async function listRelations(req: Request, res: Response, kind: "followers" | "following"): Promise<void> {
+    const id = req.params.id;
+
+    if (typeof id !== "string" || !mongoose.isValidObjectId(id)) {
+        res.status(400).json({ error: "Invalid user id" });
+        return;
+    }
+
+    try {
+        const filter = kind === "followers" ? { following: id } : { follower: id };
+        const field = kind === "followers" ? "follower" : "following";
+
+        const follows = await Follow.find(filter)
+            .populate(field, "username bio")
+            .sort({ createdAt: -1 });
+
+        res.json({ users: follows.map((follow) => follow[field]) });
+    } catch (error) {
+        console.error(`${kind} failed:`, error);
         res.status(500).json({ error: "Internal server error" });
     }
 }

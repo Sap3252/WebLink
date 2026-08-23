@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import mongoose from "mongoose";
-import Post from "../models/Post.js";
+import type { QueryFilter } from "mongoose";
+import Post, { type IPost } from "../models/Post.js";
+import { parseCursorParams, nextCursorOf } from "../utils/pagination.js";
 
 
 //POST /posts
@@ -93,6 +95,33 @@ export async function deletePost(req: Request, res: Response): Promise<void> {
 
     } catch (error) {
         console.error("deletePost failed:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+export async function listPosts(req: Request, res: Response): Promise<void> {
+    const page = parseCursorParams(req);
+
+    if (!page) {
+        res.status(400).json({ error: "Invalid pagination parameters" });
+        return;
+    }
+
+    try {
+        const filter: QueryFilter<IPost> = {};
+
+        if (page.cursor) {
+            filter.createdAt = { $lt: page.cursor };
+        }
+
+        const posts = await Post.find(filter)
+            .sort({ createdAt: -1 })
+            .limit(page.limit)
+            .populate("author", "username bio");
+
+        res.json({ posts, nextCursor: nextCursorOf(posts, page.limit) });
+    } catch (error) {
+        console.error("listPosts failed:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 }

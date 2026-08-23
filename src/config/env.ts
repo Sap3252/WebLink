@@ -7,6 +7,7 @@ function required(name: string): string {
 }
 
 const port = Number(process.env.PORT ?? 3000);
+
 if (!Number.isInteger(port) || port <= 0) {
     throw new Error(`Invalid PORT: ${process.env.PORT}`);
 }
@@ -16,5 +17,6 @@ export const env = {
     port,
     mongodbUri: required('MONGO_URI'),
     jwtSecret: required('JWT_SECRET'),
-    jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '7d'
+    jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '7d',
+    corsOrigin: process.env.CORS_ORIGIN ?? 'http://localhost:5173'
 } as const;
