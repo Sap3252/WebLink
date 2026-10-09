@@ -31,7 +31,8 @@ export interface PostsPage {
     nextCursor: string | null;
 }
 
-export interface Profile extends User {
+export interface Profile extends PublicUser {
+    createdAt: string;
     followers: number;
     following: number;
     isFollowing: boolean | null;

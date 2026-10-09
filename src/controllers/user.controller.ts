@@ -124,7 +124,9 @@ export async function getUserProfile(req: Request, res: Response): Promise<void>
         return;
     }
 
-    const user = await User.findOne({ username: username.trim() });
+    const user = await User.findOne({ username: username.trim() })
+        .select(`${PUBLIC_USER_FIELDS} createdAt`)
+        .lean();
 
     if (!user) {
         res.status(404).json({ error: "User not found" });
@@ -140,7 +142,7 @@ export async function getUserProfile(req: Request, res: Response): Promise<void>
     ]);
 
     res.json({
-        ...user.toJSON(),
+        ...user,
         followers,
         following,
         isFollowing: viewer ? Boolean(follow) : null,
