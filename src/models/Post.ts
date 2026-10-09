@@ -5,6 +5,7 @@ export interface IPost {
     text?: string;
     author: Types.ObjectId;
     linksCount: number;
+    commentsCount: number;
     // Soft delete: the post stays so its conversation keeps a place, but it's hidden
     // from every list and its content is gone. null while the post is active.
     deletedAt: Date | null;
@@ -36,8 +37,14 @@ const postSchema = new Schema<IPost>(
             ref: "User",
             required: [true, "Author is required"],
         },
-        // Kept in sync on every link/unlink, so lists don't have to count links.
+        // Counters kept in sync on every link/unlink and comment/delete,
+        // so lists don't have to count them.
         linksCount: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+        commentsCount: {
             type: Number,
             default: 0,
             min: 0,

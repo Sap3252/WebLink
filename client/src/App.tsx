@@ -6,6 +6,7 @@ import { Layout } from "./components/Layout";
 import { LanguageProvider } from "./i18n/LanguageProvider";
 import { FeedPage } from "./pages/FeedPage";
 import { LoginPage } from "./pages/LoginPage";
+import { PostPage } from "./pages/PostPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ThemeProvider } from "./theme/ThemeProvider";
@@ -26,6 +27,7 @@ function App() {
                                     <Route path="/" element={<FeedPage />} />
                                 </Route>
                                 <Route path="/u/:username" element={<ProfilePage />} />
+                                <Route path="/p/:id" element={<PostPage />} />
                                 <Route path="*" element={<Navigate to="/" replace />} />
                             </Route>
                         </Routes>

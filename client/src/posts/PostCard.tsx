@@ -4,6 +4,7 @@ import { Avatar } from "../components/Avatar";
 import { getErrorMessage } from "../i18n/errors";
 import { useTranslation } from "../i18n/useTranslation";
 import type { Post } from "../lib/types";
+import { useConfirmedDelete } from "../lib/useConfirmedDelete";
 import { LinkButton } from "./LinkButton";
 import styles from "./PostCard.module.css";
 
@@ -17,12 +18,16 @@ interface PostCardProps {
     enterIndex: number;
     // Only passed when the current user can delete this post.
     onDelete?: () => Promise<void>;
+    // False on the post's own page, where the comments are already below.
+    showCommentsLink?: boolean;
 }
 
-export function PostCard({ post, enterIndex, onDelete }: PostCardProps) {
+export function PostCard({ post, enterIndex, onDelete, showCommentsLink = true }: PostCardProps) {
     const { language, t } = useTranslation();
-    const [deleting, setDeleting] = useState(false);
-    const [error, setError] = useState<unknown>(null);
+    const { deleting, error, confirmAndDelete } = useConfirmedDelete(
+        onDelete,
+        t("posts.confirmDelete"),
+    );
     // Read only on mount: when a post is added or removed the others shift position,
     // and recalculating here would replay their entrance.
     const [entrance] = useState(() => ({
@@ -33,23 +38,12 @@ export function PostCard({ post, enterIndex, onDelete }: PostCardProps) {
         dateStyle: "medium",
         timeStyle: "short",
     }).format(new Date(post.createdAt));
-
-    async function handleDelete() {
-        if (!onDelete || !window.confirm(t("posts.confirmDelete"))) {
-            return;
-        }
-
-        setDeleting(true);
-        setError(null);
-
-        try {
-            // On success the list drops this post and the card unmounts.
-            await onDelete();
-        } catch (err) {
-            setError(err);
-            setDeleting(false);
-        }
-    }
+    const commentsLabel = t(
+        post.commentsCount === 1 ? "comments.countOne" : "comments.countOther",
+        {
+            count: String(post.commentsCount),
+        },
+    );
 
     return (
         <article
@@ -62,19 +56,34 @@ export function PostCard({ post, enterIndex, onDelete }: PostCardProps) {
                     <Link to={`/u/${post.author.username}`} className={styles.author}>
                         @{post.author.username}
                     </Link>
-                    <time dateTime={post.createdAt} className={styles.date}>
-                        {date}
-                    </time>
+                    <Link to={`/p/${post._id}`} className={styles.dateLink}>
+                        <time dateTime={post.createdAt}>{date}</time>
+                    </Link>
                 </header>
                 <p className={styles.text}>{post.text}</p>
                 <footer className={styles.footer}>
-                    <LinkButton post={post} />
+                    <div className={styles.actions}>
+                        <LinkButton post={post} />
+                        {showCommentsLink && (
+                            <Link
+                                to={`/p/${post._id}`}
+                                className={styles.comments}
+                                aria-label={commentsLabel}
+                                title={commentsLabel}
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8l-5 4v-4H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
+                                </svg>
+                                <span>{post.commentsCount}</span>
+                            </Link>
+                        )}
+                    </div>
                     {onDelete && (
                         <button
                             type="button"
                             className={`btn-ghost ${styles.delete}`}
                             disabled={deleting}
-                            onClick={handleDelete}
+                            onClick={confirmAndDelete}
                         >
                             {deleting ? t("posts.deleting") : t("posts.delete")}
                         </button>

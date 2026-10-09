@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.routes.js";
 import postRoutes from "./routes/post.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import feedRoutes from "./routes/feed.routes.js";
+import commentRoutes from "./routes/comment.routes.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFound } from "./middlewares/notFound.js";
 import cors from "cors";
@@ -23,6 +24,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/feed", feedRoutes);
+app.use("/api/comments", commentRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

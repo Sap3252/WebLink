@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { api } from "../lib/api";
 import type { Post, PostsPage } from "../lib/types";
+import { usePaginatedList, type ListPage } from "../lib/usePaginatedList";
 
 export interface PaginatedPosts {
     posts: Post[];
@@ -13,72 +13,25 @@ export interface PaginatedPosts {
     deletePost: (id: string) => Promise<void>;
 }
 
-// Loads a paginated post list (feed, all posts, a user's posts) and keeps the cursor.
-// To switch to another list, give the component a new `key` so the state starts fresh.
+function toPostsPage(page: PostsPage): ListPage<Post> {
+    return { items: page.posts, nextCursor: page.nextCursor };
+}
+
+// A paginated post list: the feed, all posts or a user's posts.
 export function usePaginatedPosts(path: string): PaginatedPosts {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [nextCursor, setNextCursor] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [loadingMore, setLoadingMore] = useState(false);
-    const [error, setError] = useState<unknown>(null);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        api<PostsPage>(path)
-            .then((page) => {
-                if (cancelled) return;
-                setPosts(page.posts);
-                setNextCursor(page.nextCursor);
-            })
-            .catch((err: unknown) => {
-                if (!cancelled) setError(err);
-            })
-            .finally(() => {
-                if (!cancelled) setLoading(false);
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, [path]);
-
-    async function loadMore() {
-        if (!nextCursor) {
-            return;
-        }
-
-        setLoadingMore(true);
-        setError(null);
-
-        try {
-            const page = await api<PostsPage>(`${path}?before=${encodeURIComponent(nextCursor)}`);
-            setPosts((current) => [...current, ...page.posts]);
-            setNextCursor(page.nextCursor);
-        } catch (err) {
-            setError(err);
-        } finally {
-            setLoadingMore(false);
-        }
-    }
-
-    function addPost(post: Post) {
-        setPosts((current) => [post, ...current]);
-    }
-
-    async function deletePost(id: string) {
-        await api<void>(`/posts/${id}`, { method: "DELETE" });
-        setPosts((current) => current.filter((post) => post._id !== id));
-    }
+    const list = usePaginatedList(path, toPostsPage);
 
     return {
-        posts,
-        loading,
-        loadingMore,
-        hasMore: nextCursor !== null,
-        error,
-        loadMore,
-        addPost,
-        deletePost,
+        posts: list.items,
+        loading: list.loading,
+        loadingMore: list.loadingMore,
+        hasMore: list.hasMore,
+        error: list.error,
+        loadMore: list.loadMore,
+        addPost: list.prepend,
+        deletePost: async (id) => {
+            await api<void>(`/posts/${id}`, { method: "DELETE" });
+            list.remove(id);
+        },
     };
 }

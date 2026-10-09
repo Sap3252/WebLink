@@ -1,0 +1,62 @@
+.comment {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.7rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius);
+    animation: fade-up 0.4s var(--ease-out) backwards;
+}
+
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+.body {
+    flex: 1;
+    min-width: 0;
+}
+
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 0.75rem;
+}
+
+.author {
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.date {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.text {
+    margin: 0.2rem 0 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.delete {
+    padding: 0.2rem 0.7rem;
+    color: var(--danger);
+    font-size: 0.8rem;
+}
+
+.error {
+    margin: 0.3rem 0 0;
+    color: var(--danger);
+    font-size: 0.85rem;
+}

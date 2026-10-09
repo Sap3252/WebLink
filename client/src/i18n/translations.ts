@@ -52,6 +52,24 @@ const en = {
     "links.countOther": "{count} links",
     "links.loginToLink": "Log in to link posts",
 
+    "post.title": "Post",
+    "post.deleted": "This post was deleted.",
+
+    "comments.title": "Comments",
+    "comments.label": "New comment",
+    "comments.placeholder": "Write a comment...",
+    "comments.publish": "Comment",
+    "comments.publishing": "Commenting...",
+    "comments.empty": "No comments yet. Start the conversation.",
+    "comments.closed": "This post was deleted, so the conversation is closed.",
+    "comments.loginToComment": "Want to join the conversation?",
+    "comments.loginLink": "Log in",
+    "comments.countOne": "{count} comment",
+    "comments.countOther": "{count} comments",
+    "comments.delete": "Delete",
+    "comments.deleting": "Deleting...",
+    "comments.confirmDelete": "Delete this comment?",
+
     "profile.joined": "Joined {date}",
     "profile.followersOne": "{count} follower",
     "profile.followersOther": "{count} followers",
@@ -74,6 +92,9 @@ const en = {
     "errors.missingFields": "Please fill in all the fields",
     "errors.textRequired": "Write something before posting",
     "errors.userNotFound": "This user doesn't exist",
+    "errors.postDeleted": "This post was deleted",
+    "errors.postNotFound": "This post doesn't exist",
+    "errors.commentNotFound": "This comment doesn't exist",
 };
 
 export type TranslationKey = keyof typeof en;
@@ -124,6 +145,24 @@ const es: Record<TranslationKey, string> = {
     "links.countOther": "{count} links",
     "links.loginToLink": "Iniciá sesión para dar links",
 
+    "post.title": "Post",
+    "post.deleted": "Este post fue eliminado.",
+
+    "comments.title": "Comentarios",
+    "comments.label": "Nuevo comentario",
+    "comments.placeholder": "Escribí un comentario...",
+    "comments.publish": "Comentar",
+    "comments.publishing": "Comentando...",
+    "comments.empty": "Todavía no hay comentarios. Empezá la conversación.",
+    "comments.closed": "Este post fue eliminado, así que la conversación está cerrada.",
+    "comments.loginToComment": "¿Querés sumarte a la conversación?",
+    "comments.loginLink": "Iniciá sesión",
+    "comments.countOne": "{count} comentario",
+    "comments.countOther": "{count} comentarios",
+    "comments.delete": "Borrar",
+    "comments.deleting": "Borrando...",
+    "comments.confirmDelete": "¿Borrar este comentario?",
+
     "profile.joined": "Se unió en {date}",
     "profile.followersOne": "{count} seguidor",
     "profile.followersOther": "{count} seguidores",
@@ -146,6 +185,9 @@ const es: Record<TranslationKey, string> = {
     "errors.missingFields": "Completá todos los campos",
     "errors.textRequired": "Escribí algo antes de publicar",
     "errors.userNotFound": "Este usuario no existe",
+    "errors.postDeleted": "Este post fue eliminado",
+    "errors.postNotFound": "Este post no existe",
+    "errors.commentNotFound": "Este comentario no existe",
 };
 
 export const translations: Record<Language, Record<TranslationKey, string>> = { en, es };

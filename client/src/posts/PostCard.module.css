@@ -85,9 +85,10 @@
     font-weight: 700;
 }
 
-.date {
+.dateLink {
     color: var(--text-muted);
     font-size: 0.8rem;
+    font-weight: 400;
 }
 
 .text {
@@ -102,6 +103,41 @@
     align-items: center;
     justify-content: space-between;
     margin-top: 0.4rem;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.comments {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem 0.3rem 0.5rem;
+    border-radius: var(--radius-pill);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition:
+        background 0.2s,
+        color 0.2s;
+}
+
+.comments:hover {
+    background: var(--glass-bg);
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.comments svg {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linejoin: round;
 }
 
 .delete {

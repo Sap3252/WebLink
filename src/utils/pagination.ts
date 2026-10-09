@@ -32,6 +32,11 @@ export function parseCursorParams(req: Request): CursorParams | null {
     return { limit, cursor };
 }
 
+// Keeps only items older than the cursor. Empty on the first page.
+export function createdBefore(page: CursorParams): { createdAt?: { $lt: Date } } {
+    return page.cursor ? { createdAt: { $lt: page.cursor } } : {};
+}
+
 export function nextCursorOf(items: { createdAt: Date }[], limit: number): string | null {
     const last = items.at(-1);
 

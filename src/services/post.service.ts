@@ -2,7 +2,7 @@ import type { QueryFilter } from "mongoose";
 import Link from "../models/Link.js";
 import Post, { ACTIVE_POST, type IPost, type PostDocument } from "../models/Post.js";
 import { PUBLIC_USER_FIELDS } from "../models/User.js";
-import { nextCursorOf, type CursorParams } from "../utils/pagination.js";
+import { createdBefore, nextCursorOf, type CursorParams } from "../utils/pagination.js";
 
 // Adds `linkedByMe` to each post: whether the viewer gave it a link (false for guests).
 export async function withLinkedByMe(posts: PostDocument[], viewerId: string | undefined) {
@@ -32,13 +32,7 @@ export async function findPostsPage(
     page: CursorParams,
     viewerId: string | undefined,
 ) {
-    const pageFilter: QueryFilter<IPost> = { ...filter, ...ACTIVE_POST };
-
-    if (page.cursor) {
-        pageFilter.createdAt = { $lt: page.cursor };
-    }
-
-    const posts = await Post.find(pageFilter)
+    const posts = await Post.find({ ...filter, ...ACTIVE_POST, ...createdBefore(page) })
         .sort({ createdAt: -1 })
         .limit(page.limit)
         .populate("author", PUBLIC_USER_FIELDS);

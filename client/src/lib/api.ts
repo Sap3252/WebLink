@@ -1,8 +1,8 @@
-// 1 — constantes
+// 1. constantes
 const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000/api";
 const TOKEN_KEY = "weblink.token";
 
-// 2 — el token en localStorage
+// 2. el token en localStorage
 export function getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);
 }
@@ -15,7 +15,7 @@ export function clearToken(): void {
     localStorage.removeItem(TOKEN_KEY);
 }
 
-// 3 — un error que lleve el status
+// 3. un error que lleve el status
 export class ApiError extends Error {
     status: number;
 
@@ -26,20 +26,20 @@ export class ApiError extends Error {
     }
 }
 
-// 4 — las opciones que acepta una llamada
+// 4. las opciones que acepta una llamada
 interface RequestOptions {
     method?: string;
     body?: unknown;
 }
 
-// 5 — qué hacer cuando un request con token recibe 401 (token vencido o inválido)
+// 5. qué hacer cuando un request con token recibe 401 (token vencido o inválido)
 let unauthorizedHandler: (() => void) | null = null;
 
 export function setUnauthorizedHandler(handler: (() => void) | null): void {
     unauthorizedHandler = handler;
 }
 
-// 6 — la función principal
+// 6. la función principal
 export async function api<T>(path: string, options: RequestOptions = {}): Promise<T> {
     const { method = "GET", body } = options;
 

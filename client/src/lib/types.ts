@@ -24,8 +24,31 @@ export interface Post {
     author: PublicUser;
     linksCount: number;
     linkedByMe: boolean;
+    commentsCount: number;
     createdAt: string;
     updatedAt: string;
+}
+
+// What GET /posts/:id returns for a deleted post: no text, no author.
+export interface DeletedPost {
+    _id: string;
+    deleted: true;
+    commentsCount: number;
+    createdAt: string;
+    deletedAt: string;
+}
+
+export interface Comment {
+    _id: string;
+    post: string;
+    author: PublicUser;
+    text: string;
+    createdAt: string;
+}
+
+export interface CommentsPage {
+    comments: Comment[];
+    nextCursor: string | null;
 }
 
 export interface LinkResult {

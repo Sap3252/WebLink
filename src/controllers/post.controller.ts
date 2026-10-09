@@ -42,10 +42,12 @@ export async function getPost(req: Request, res: Response): Promise<void> {
     }
 
     if (post.deletedAt) {
-        // A deleted post only says that it existed: no text, no author.
+        // A deleted post only says that it existed (and how many comments it has):
+        // no text, no author.
         res.json({
             _id: post._id,
             deleted: true,
+            commentsCount: post.commentsCount,
             createdAt: post.createdAt,
             deletedAt: post.deletedAt,
         });
