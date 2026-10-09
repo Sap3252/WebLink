@@ -19,26 +19,21 @@ export async function getFeed(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    try {
-        const follows = await Follow.find({ follower: userId }).select("following").lean();
-        const authors = follows.map((follow) => follow.following.toString());
+    const follows = await Follow.find({ follower: userId }).select("following").lean();
+    const authors = follows.map((follow) => follow.following.toString());
 
-        authors.push(userId);
+    authors.push(userId);
 
-        const filter: QueryFilter<IPost> = { author: { $in: authors } };
+    const filter: QueryFilter<IPost> = { author: { $in: authors } };
 
-        if (page.cursor) {
-            filter.createdAt = { $lt: page.cursor };
-        }
-
-        const posts = await Post.find(filter)
-            .sort({ createdAt: -1 })
-            .limit(page.limit)
-            .populate("author", "username bio");
-
-        res.json({ posts, nextCursor: nextCursorOf(posts, page.limit) });
-    } catch (error) {
-        console.error("getFeed failed:", error);
-        res.status(500).json({ error: "Internal server error" });
+    if (page.cursor) {
+        filter.createdAt = { $lt: page.cursor };
     }
+
+    const posts = await Post.find(filter)
+        .sort({ createdAt: -1 })
+        .limit(page.limit)
+        .populate("author", "username bio");
+
+    res.json({ posts, nextCursor: nextCursorOf(posts, page.limit) });
 }

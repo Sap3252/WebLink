@@ -20,20 +20,10 @@ export async function createPost(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    try {
-        const post = await Post.create({ text: text.trim(), author });
-        await post.populate("author", "username bio");
+    const post = await Post.create({ text: text.trim(), author });
+    await post.populate("author", "username bio");
 
-        res.status(201).json(post);
-    } catch (error) {
-        if (error instanceof mongoose.Error.ValidationError) {
-            res.status(400).json({ error: error.message });
-            return;
-        }
-
-        console.error("createPost failed:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
+    res.status(201).json(post);
 }
 
 //GET /posts/:id
@@ -45,19 +35,14 @@ export async function getPost(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    try {
-        const post = await Post.findById(id).populate("author", "username bio");
+    const post = await Post.findById(id).populate("author", "username bio");
 
-        if (!post) {
-            res.status(404).json({ error: "Post not found" });
-            return;
-        }
-
-        res.json(post);
-    } catch (error) {
-        console.error("getPost failed:", error);
-        res.status(500).json({ error: "Internal server error" });
+    if (!post) {
+        res.status(404).json({ error: "Post not found" });
+        return;
     }
+
+    res.json(post);
 }
 
 export async function deletePost(req: Request, res: Response): Promise<void> {
@@ -75,25 +60,20 @@ export async function deletePost(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    try {
-        const post = await Post.findById(id);
+    const post = await Post.findById(id);
 
-        if (!post) {
-            res.status(404).json({ error: "Post not found" });
-            return;
-        }
-
-        if (post.author.toString() !== userId) {
-            res.status(403).json({ error: "You can only delete your own posts" });
-            return;
-        }
-
-        await post.deleteOne();
-        res.status(204).json({ message: "Post deleted successfully" });
-    } catch (error) {
-        console.error("deletePost failed:", error);
-        res.status(500).json({ error: "Internal server error" });
+    if (!post) {
+        res.status(404).json({ error: "Post not found" });
+        return;
     }
+
+    if (post.author.toString() !== userId) {
+        res.status(403).json({ error: "You can only delete your own posts" });
+        return;
+    }
+
+    await post.deleteOne();
+    res.status(204).json({ message: "Post deleted successfully" });
 }
 
 export async function listPosts(req: Request, res: Response): Promise<void> {
@@ -104,21 +84,16 @@ export async function listPosts(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    try {
-        const filter: QueryFilter<IPost> = {};
+    const filter: QueryFilter<IPost> = {};
 
-        if (page.cursor) {
-            filter.createdAt = { $lt: page.cursor };
-        }
-
-        const posts = await Post.find(filter)
-            .sort({ createdAt: -1 })
-            .limit(page.limit)
-            .populate("author", "username bio");
-
-        res.json({ posts, nextCursor: nextCursorOf(posts, page.limit) });
-    } catch (error) {
-        console.error("listPosts failed:", error);
-        res.status(500).json({ error: "Internal server error" });
+    if (page.cursor) {
+        filter.createdAt = { $lt: page.cursor };
     }
+
+    const posts = await Post.find(filter)
+        .sort({ createdAt: -1 })
+        .limit(page.limit)
+        .populate("author", "username bio");
+
+    res.json({ posts, nextCursor: nextCursorOf(posts, page.limit) });
 }

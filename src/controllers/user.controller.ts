@@ -6,12 +6,6 @@ import User from "../models/User.js";
 import Post, { type IPost } from "../models/Post.js";
 import { parseCursorParams, nextCursorOf } from "../utils/pagination.js";
 
-function isDuplicateKeyError(error: unknown): boolean {
-    return (
-        typeof error === "object" && error !== null && (error as { code?: unknown }).code === 11000
-    );
-}
-
 export async function followUser(req: Request, res: Response): Promise<void> {
     const follower = req.userId;
 
@@ -32,26 +26,23 @@ export async function followUser(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    try {
-        const target = await User.exists({ _id: following });
+    const target = await User.exists({ _id: following });
 
-        if (!target) {
-            res.status(404).json({ error: "User not found" });
-            return;
-        }
-
-        const follow = await Follow.create({ follower, following });
-
-        res.status(201).json(follow);
-    } catch (error) {
-        if (isDuplicateKeyError(error)) {
-            res.status(409).json({ error: "You are already following this user" });
-            return;
-        }
-
-        console.error("followUser failed:", error);
-        res.status(500).json({ error: "Internal server error" });
+    if (!target) {
+        res.status(404).json({ error: "User not found" });
+        return;
     }
+
+    const alreadyFollowing = await Follow.exists({ follower, following });
+
+    if (alreadyFollowing) {
+        res.status(409).json({ error: "You are already following this user" });
+        return;
+    }
+
+    const follow = await Follow.create({ follower, following });
+
+    res.status(201).json(follow);
 }
 
 export async function unfollowUser(req: Request, res: Response): Promise<void> {
@@ -69,19 +60,14 @@ export async function unfollowUser(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    try {
-        const deleted = await Follow.findOneAndDelete({ follower, following });
+    const deleted = await Follow.findOneAndDelete({ follower, following });
 
-        if (!deleted) {
-            res.status(404).json({ error: "You are not following this user" });
-            return;
-        }
-
-        res.status(204).send();
-    } catch (error) {
-        console.error("unfollowUser failed:", error);
-        res.status(500).json({ error: "Internal server error" });
+    if (!deleted) {
+        res.status(404).json({ error: "You are not following this user" });
+        return;
     }
+
+    res.status(204).send();
 }
 
 export async function updateMe(req: Request, res: Response): Promise<void> {
@@ -118,32 +104,17 @@ export async function updateMe(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    try {
-        const user = await User.findByIdAndUpdate(userId, updates, {
-            new: true,
-            runValidators: true,
-        });
+    const user = await User.findByIdAndUpdate(userId, updates, {
+        new: true,
+        runValidators: true,
+    });
 
-        if (!user) {
-            res.status(404).json({ error: "User not found" });
-            return;
-        }
-
-        res.json(user);
-    } catch (error) {
-        if (error instanceof mongoose.Error.ValidationError) {
-            res.status(400).json({ error: error.message });
-            return;
-        }
-
-        if (isDuplicateKeyError(error)) {
-            res.status(409).json({ error: "Username already in use" });
-            return;
-        }
-
-        console.error("updateMe failed:", error);
-        res.status(500).json({ error: "Internal server error" });
+    if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return;
     }
+
+    res.json(user);
 }
 
 export async function getUserProfile(req: Request, res: Response): Promise<void> {
@@ -154,32 +125,27 @@ export async function getUserProfile(req: Request, res: Response): Promise<void>
         return;
     }
 
-    try {
-        const user = await User.findOne({ username: username.trim() });
+    const user = await User.findOne({ username: username.trim() });
 
-        if (!user) {
-            res.status(404).json({ error: "User not found" });
-            return;
-        }
-
-        const viewer = req.userId;
-
-        const [followers, following, follow] = await Promise.all([
-            Follow.countDocuments({ following: user._id }),
-            Follow.countDocuments({ follower: user._id }),
-            viewer ? Follow.exists({ follower: viewer, following: user._id }) : null,
-        ]);
-
-        res.json({
-            ...user.toJSON(),
-            followers,
-            following,
-            isFollowing: viewer ? Boolean(follow) : null,
-        });
-    } catch (error) {
-        console.error("getUserProfile failed:", error);
-        res.status(500).json({ error: "Internal server error" });
+    if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return;
     }
+
+    const viewer = req.userId;
+
+    const [followers, following, follow] = await Promise.all([
+        Follow.countDocuments({ following: user._id }),
+        Follow.countDocuments({ follower: user._id }),
+        viewer ? Follow.exists({ follower: viewer, following: user._id }) : null,
+    ]);
+
+    res.json({
+        ...user.toJSON(),
+        followers,
+        following,
+        isFollowing: viewer ? Boolean(follow) : null,
+    });
 }
 
 export async function getUserPosts(req: Request, res: Response): Promise<void> {
@@ -197,30 +163,25 @@ export async function getUserPosts(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    try {
-        const user = await User.findOne({ username: username.trim() }).select("_id").lean();
+    const user = await User.findOne({ username: username.trim() }).select("_id").lean();
 
-        if (!user) {
-            res.status(404).json({ error: "User not found" });
-            return;
-        }
-
-        const filter: QueryFilter<IPost> = { author: user._id };
-
-        if (page.cursor) {
-            filter.createdAt = { $lt: page.cursor };
-        }
-
-        const posts = await Post.find(filter)
-            .sort({ createdAt: -1 })
-            .limit(page.limit)
-            .populate("author", "username bio");
-
-        res.json({ posts, nextCursor: nextCursorOf(posts, page.limit) });
-    } catch (error) {
-        console.error("getUserPosts failed:", error);
-        res.status(500).json({ error: "Internal server error" });
+    if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return;
     }
+
+    const filter: QueryFilter<IPost> = { author: user._id };
+
+    if (page.cursor) {
+        filter.createdAt = { $lt: page.cursor };
+    }
+
+    const posts = await Post.find(filter)
+        .sort({ createdAt: -1 })
+        .limit(page.limit)
+        .populate("author", "username bio");
+
+    res.json({ posts, nextCursor: nextCursorOf(posts, page.limit) });
 }
 
 export async function getFollowers(req: Request, res: Response): Promise<void> {
@@ -243,17 +204,12 @@ async function listRelations(
         return;
     }
 
-    try {
-        const filter = kind === "followers" ? { following: id } : { follower: id };
-        const field = kind === "followers" ? "follower" : "following";
+    const filter = kind === "followers" ? { following: id } : { follower: id };
+    const field = kind === "followers" ? "follower" : "following";
 
-        const follows = await Follow.find(filter)
-            .populate(field, "username bio")
-            .sort({ createdAt: -1 });
+    const follows = await Follow.find(filter)
+        .populate(field, "username bio")
+        .sort({ createdAt: -1 });
 
-        res.json({ users: follows.map((follow) => follow[field]) });
-    } catch (error) {
-        console.error(`${kind} failed:`, error);
-        res.status(500).json({ error: "Internal server error" });
-    }
+    res.json({ users: follows.map((follow) => follow[field]) });
 }
