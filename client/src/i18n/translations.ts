@@ -46,6 +46,12 @@ const en = {
     "posts.deleting": "Deleting...",
     "posts.confirmDelete": "Delete this post? This can't be undone.",
 
+    "links.add": "Link this post",
+    "links.remove": "Remove your link",
+    "links.countOne": "{count} link",
+    "links.countOther": "{count} links",
+    "links.loginToLink": "Log in to link posts",
+
     "profile.joined": "Joined {date}",
     "profile.followersOne": "{count} follower",
     "profile.followersOther": "{count} followers",
@@ -111,6 +117,12 @@ const es: Record<TranslationKey, string> = {
     "posts.delete": "Borrar",
     "posts.deleting": "Borrando...",
     "posts.confirmDelete": "¿Borrar este post? No se puede deshacer.",
+
+    "links.add": "Dar link a este post",
+    "links.remove": "Quitar tu link",
+    "links.countOne": "{count} link",
+    "links.countOther": "{count} links",
+    "links.loginToLink": "Iniciá sesión para dar links",
 
     "profile.joined": "Se unió en {date}",
     "profile.followersOne": "{count} seguidor",

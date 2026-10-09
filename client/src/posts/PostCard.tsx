@@ -4,6 +4,7 @@ import { Avatar } from "../components/Avatar";
 import { getErrorMessage } from "../i18n/errors";
 import { useTranslation } from "../i18n/useTranslation";
 import type { Post } from "../lib/types";
+import { LinkButton } from "./LinkButton";
 import styles from "./PostCard.module.css";
 
 const STAGGER_MS = 80;
@@ -66,8 +67,9 @@ export function PostCard({ post, enterIndex, onDelete }: PostCardProps) {
                     </time>
                 </header>
                 <p className={styles.text}>{post.text}</p>
-                {onDelete && (
-                    <footer className={styles.footer}>
+                <footer className={styles.footer}>
+                    <LinkButton post={post} />
+                    {onDelete && (
                         <button
                             type="button"
                             className={`btn-ghost ${styles.delete}`}
@@ -76,8 +78,8 @@ export function PostCard({ post, enterIndex, onDelete }: PostCardProps) {
                         >
                             {deleting ? t("posts.deleting") : t("posts.delete")}
                         </button>
-                    </footer>
-                )}
+                    )}
+                </footer>
                 {error !== null && (
                     <p role="alert" className={styles.error}>
                         {getErrorMessage(error, t)}

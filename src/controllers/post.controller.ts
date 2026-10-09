@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import mongoose from "mongoose";
 import Post from "../models/Post.js";
 import { PUBLIC_USER_FIELDS } from "../models/User.js";
-import { findPostsPage } from "../services/post.service.js";
+import { findPostsPage, withLinkedByMe } from "../services/post.service.js";
 import { parseCursorParams } from "../utils/pagination.js";
 
 export async function createPost(req: Request, res: Response): Promise<void> {
@@ -23,7 +23,7 @@ export async function createPost(req: Request, res: Response): Promise<void> {
     const post = await Post.create({ text: text.trim(), author });
     await post.populate("author", PUBLIC_USER_FIELDS);
 
-    res.status(201).json(post);
+    res.status(201).json({ ...post.toJSON(), linkedByMe: false });
 }
 
 export async function getPost(req: Request, res: Response): Promise<void> {
@@ -41,7 +41,8 @@ export async function getPost(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    res.json(post);
+    const [postWithLink] = await withLinkedByMe([post], req.userId);
+    res.json(postWithLink);
 }
 
 export async function deletePost(req: Request, res: Response): Promise<void> {
@@ -83,5 +84,5 @@ export async function listPosts(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    res.json(await findPostsPage({}, page));
+    res.json(await findPostsPage({}, page, req.userId));
 }

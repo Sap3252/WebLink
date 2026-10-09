@@ -22,8 +22,15 @@ export interface Post {
     _id: string;
     text: string;
     author: PublicUser;
+    linksCount: number;
+    linkedByMe: boolean;
     createdAt: string;
     updatedAt: string;
+}
+
+export interface LinkResult {
+    linksCount: number;
+    linkedByMe: boolean;
 }
 
 export interface PostsPage {

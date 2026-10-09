@@ -171,7 +171,7 @@ export async function getUserPosts(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    res.json(await findPostsPage({ author: user._id }, page));
+    res.json(await findPostsPage({ author: user._id }, page, req.userId));
 }
 
 export async function getFollowers(req: Request, res: Response): Promise<void> {

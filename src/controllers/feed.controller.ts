@@ -23,5 +23,5 @@ export async function getFeed(req: Request, res: Response): Promise<void> {
 
     authors.push(userId);
 
-    res.json(await findPostsPage({ author: { $in: authors } }, page));
+    res.json(await findPostsPage({ author: { $in: authors } }, page, userId));
 }

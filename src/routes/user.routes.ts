@@ -15,7 +15,7 @@ const router = Router();
 
 router.patch("/me", requireAuth, updateMe);
 router.get("/:username", optionalAuth, getUserProfile);
-router.get("/:username/posts", getUserPosts);
+router.get("/:username/posts", optionalAuth, getUserPosts);
 router.get("/:id/followers", getFollowers);
 router.get("/:id/following", getFollowing);
 router.post("/:id/follow", requireAuth, followUser);

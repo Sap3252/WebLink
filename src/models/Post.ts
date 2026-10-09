@@ -3,6 +3,7 @@ import { Schema, model, type Model, type HydratedDocument, type Types } from "mo
 export interface IPost {
     text: string;
     author: Types.ObjectId;
+    linksCount: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -21,6 +22,12 @@ const postSchema = new Schema<IPost>(
             type: Schema.Types.ObjectId,
             ref: "User",
             required: [true, "Author is required"],
+        },
+        // Kept in sync on every link/unlink, so lists don't have to count links.
+        linksCount: {
+            type: Number,
+            default: 0,
+            min: 0,
         },
     },
     {
