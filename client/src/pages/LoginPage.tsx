@@ -7,7 +7,7 @@ import { useTranslation } from "../i18n/useTranslation";
 import styles from "./AuthPage.module.css";
 
 export function LoginPage() {
-    const { login } = useAuth();
+    const { login, sessionExpired } = useAuth();
     const { t } = useTranslation();
     const location = useLocation();
     const [email, setEmail] = useState("");
@@ -32,6 +32,11 @@ export function LoginPage() {
     return (
         <section className={styles.card}>
             <h1>{t("login.title")}</h1>
+            {sessionExpired && (
+                <p role="status" className={styles.notice}>
+                    {t("login.sessionExpired")}
+                </p>
+            )}
             <form className={styles.form} onSubmit={handleSubmit}>
                 <FormField
                     label={t("fields.email")}

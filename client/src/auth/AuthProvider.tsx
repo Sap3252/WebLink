@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { api, ApiError, clearToken, getToken, setToken } from "../lib/api";
+import { api, ApiError, clearToken, getToken, setToken, setUnauthorizedHandler } from "../lib/api";
 import type { AuthResponse, User } from "../lib/types";
 import {
     AuthContext,
@@ -11,6 +11,19 @@ import {
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(() => getToken() !== null);
+    const [sessionExpired, setSessionExpired] = useState(false);
+
+    // Any request that gets a 401 with our token ends the session. ProtectedRoute then
+    // sends the user to /login, and public pages simply show the logged-out view.
+    useEffect(() => {
+        setUnauthorizedHandler(() => {
+            clearToken();
+            setUser(null);
+            setSessionExpired(true);
+        });
+
+        return () => setUnauthorizedHandler(null);
+    }, []);
 
     useEffect(() => {
         if (!getToken()) {
@@ -24,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 if (!cancelled) setUser(me);
             })
             .catch((error: unknown) => {
-                // Expired token or deleted user: the stored session is no longer valid.
+                // Deleted user (404): the stored session is no longer valid.
                 if (error instanceof ApiError) clearToken();
             })
             .finally(() => {
@@ -41,16 +54,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         setToken(session.token);
         setUser(session.user);
+        setSessionExpired(false);
     }
 
     const value: AuthContextValue = {
         user,
         loading,
+        sessionExpired,
         login: (credentials) => startSession("/auth/login", credentials),
         register: (data) => startSession("/auth/register", data),
         logout: () => {
             clearToken();
             setUser(null);
+            setSessionExpired(false);
         },
     };
 

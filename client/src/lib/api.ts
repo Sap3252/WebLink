@@ -32,7 +32,14 @@ interface RequestOptions {
     body?: unknown;
 }
 
-// 5 — la función principal
+// 5 — qué hacer cuando un request con token recibe 401 (token vencido o inválido)
+let unauthorizedHandler: (() => void) | null = null;
+
+export function setUnauthorizedHandler(handler: (() => void) | null): void {
+    unauthorizedHandler = handler;
+}
+
+// 6 — la función principal
 export async function api<T>(path: string, options: RequestOptions = {}): Promise<T> {
     const { method = "GET", body } = options;
 
@@ -56,6 +63,11 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
     const data = await res.json().catch(() => null);
 
     if (!res.ok) {
+        // Sin token (por ejemplo, un login fallido) un 401 no significa que la sesión venció.
+        if (res.status === 401 && token) {
+            unauthorizedHandler?.();
+        }
+
         const message =
             (data as { error?: string } | null)?.error ?? `Request failed (${res.status})`;
         throw new ApiError(res.status, message);

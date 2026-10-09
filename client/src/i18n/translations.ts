@@ -21,6 +21,7 @@ const en = {
     "login.submitting": "Logging in...",
     "login.noAccount": "New to WebLink?",
     "login.registerLink": "Create an account",
+    "login.sessionExpired": "Your session expired. Please log in again.",
 
     "register.title": "Create your account",
     "register.submit": "Sign up",
@@ -82,6 +83,7 @@ const es: Record<TranslationKey, string> = {
     "login.submitting": "Entrando...",
     "login.noAccount": "¿Nuevo en WebLink?",
     "login.registerLink": "Crear una cuenta",
+    "login.sessionExpired": "Tu sesión expiró. Volvé a iniciar sesión.",
 
     "register.title": "Creá tu cuenta",
     "register.submit": "Registrarme",

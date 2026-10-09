@@ -13,6 +13,8 @@ export interface RegisterData extends LoginCredentials {
 export interface AuthContextValue {
     user: User | null;
     loading: boolean;
+    // True when the API rejected the stored token, until the next login or logout.
+    sessionExpired: boolean;
     login: (credentials: LoginCredentials) => Promise<void>;
     register: (data: RegisterData) => Promise<void>;
     logout: () => void;
