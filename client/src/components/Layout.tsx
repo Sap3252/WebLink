@@ -25,12 +25,21 @@ export function Layout() {
                             <Link
                                 to={`/u/${user.username}`}
                                 className={styles.me}
+                                aria-label={t("nav.profile")}
                                 title={`@${user.username}`}
                             >
                                 <Avatar username={user.username} size={36} />
                             </Link>
-                            <button type="button" className="btn-ghost" onClick={logout}>
-                                {t("nav.logout")}
+                            <button
+                                type="button"
+                                className={`btn-ghost ${styles.logout}`}
+                                onClick={logout}
+                                title={t("nav.logout")}
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H4" />
+                                </svg>
+                                <span className={styles.logoutText}>{t("nav.logout")}</span>
                             </button>
                         </>
                     )}

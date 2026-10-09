@@ -89,3 +89,14 @@
     font-weight: 800;
     letter-spacing: -0.03em;
 }
+
+@media (max-width: 520px) {
+    .icon {
+        width: 1.7rem;
+        height: 1.7rem;
+    }
+
+    .wordmark {
+        font-size: 1.1rem;
+    }
+}

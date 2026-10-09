@@ -12,6 +12,7 @@ const en = {
     "theme.toDark": "Switch to dark mode",
     "theme.toLight": "Switch to light mode",
     "nav.logout": "Log out",
+    "nav.profile": "Your profile",
 
     "fields.username": "Username",
     "fields.email": "Email",
@@ -77,6 +78,7 @@ const es: Record<TranslationKey, string> = {
     "theme.toDark": "Cambiar a modo oscuro",
     "theme.toLight": "Cambiar a modo claro",
     "nav.logout": "Cerrar sesión",
+    "nav.profile": "Tu perfil",
 
     "fields.username": "Nombre de usuario",
     "fields.email": "Email",

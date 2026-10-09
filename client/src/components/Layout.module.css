@@ -1,9 +1,10 @@
+/* Always one line: if the bar wrapped when the user loads (avatar + logout appear),
+   everything below would jump down and hurt the layout-shift (CLS) score. */
 .header {
     position: sticky;
     top: 0.75rem;
     z-index: 10;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
@@ -29,15 +30,54 @@
     transform: scale(1.08);
 }
 
+.logout {
+    display: inline-flex;
+    align-items: center;
+}
+
+.logout svg {
+    display: none;
+    width: 1.2rem;
+    height: 1.2rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 .main {
     max-width: 640px;
     margin: 0 auto;
     padding: 1.5rem 1rem 4rem;
 }
 
+/* On phones the logout button shows only the icon; the text stays for screen readers. */
 @media (max-width: 520px) {
     .header {
+        gap: 0.5rem;
         margin: 0.5rem 0.5rem 0;
-        border-radius: var(--radius-lg);
+        padding: 0.4rem 0.5rem 0.4rem 0.8rem;
+    }
+
+    .nav {
+        gap: 0.3rem;
+    }
+
+    .logout {
+        padding: 0.5rem;
+    }
+
+    .logout svg {
+        display: block;
+    }
+
+    .logoutText {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
     }
 }

@@ -26,3 +26,9 @@
     color: var(--on-accent);
     box-shadow: 0 4px 12px rgba(124, 92, 255, 0.35);
 }
+
+@media (max-width: 520px) {
+    .switcher button {
+        padding: 0.3rem 0.5rem;
+    }
+}
