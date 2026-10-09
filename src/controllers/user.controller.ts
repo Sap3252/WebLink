@@ -104,7 +104,7 @@ export async function updateMe(req: Request, res: Response): Promise<void> {
     }
 
     const user = await User.findByIdAndUpdate(userId, updates, {
-        new: true,
+        returnDocument: "after",
         runValidators: true,
     });
 

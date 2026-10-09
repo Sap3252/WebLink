@@ -6,6 +6,7 @@ import postRoutes from "./routes/post.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import feedRoutes from "./routes/feed.routes.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
+import { notFound } from "./middlewares/notFound.js";
 import cors from "cors";
 
 const app = express();
@@ -23,6 +24,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/feed", feedRoutes);
 
+app.use(notFound);
 app.use(errorHandler);
 
 try {
