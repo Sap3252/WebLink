@@ -1,0 +1,42 @@
+.icon {
+    width: 1.3rem;
+    height: 1.3rem;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* pathLength="1" plus a dash of 1 and a gap of 2: offset 1 hides the tail, 0 shows it. */
+.tail {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
+}
+
+.node {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+/* When the link or button that contains the icon is hovered, the tail is drawn again
+   from the bubble towards the node, and the node pops when the tail reaches it. */
+:hover > .icon .tail {
+    animation: draw-tail 0.35s var(--ease-out);
+}
+
+:hover > .icon .node {
+    animation: pop-node 0.45s 0.25s var(--ease-bounce);
+}
+
+@keyframes draw-tail {
+    from {
+        stroke-dashoffset: 1;
+    }
+}
+
+@keyframes pop-node {
+    50% {
+        transform: scale(1.45);
+    }
+}

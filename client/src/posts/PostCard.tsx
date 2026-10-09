@@ -5,6 +5,7 @@ import { getErrorMessage } from "../i18n/errors";
 import { useTranslation } from "../i18n/useTranslation";
 import type { Post } from "../lib/types";
 import { useConfirmedDelete } from "../lib/useConfirmedDelete";
+import { CommentIcon } from "./CommentIcon";
 import { LinkButton } from "./LinkButton";
 import styles from "./PostCard.module.css";
 
@@ -71,9 +72,7 @@ export function PostCard({ post, enterIndex, onDelete, showCommentsLink = true }
                                 aria-label={commentsLabel}
                                 title={commentsLabel}
                             >
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8l-5 4v-4H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
-                                </svg>
+                                <CommentIcon />
                                 <span>{post.commentsCount}</span>
                             </Link>
                         )}

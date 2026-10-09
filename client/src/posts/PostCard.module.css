@@ -131,15 +131,6 @@
     text-decoration: none;
 }
 
-.comments svg {
-    width: 1.3rem;
-    height: 1.3rem;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linejoin: round;
-}
-
 .delete {
     padding: 0.25rem 0.75rem;
     color: var(--danger);
