@@ -62,14 +62,14 @@ npm install --prefix client
 
 Copy `.env.example` to `.env` in the project root and fill it in:
 
-| Variable         | Required | Default                 | Description                    |
-| ---------------- | -------- | ----------------------- | ------------------------------ |
-| `MONGO_URI`      | Yes      |                         | MongoDB connection string      |
-| `JWT_SECRET`     | Yes      |                         | Secret used to sign tokens     |
-| `JWT_EXPIRES_IN` | No       | `7d`                    | Token lifetime                 |
-| `PORT`           | No       | `3000`                  | API port                       |
-| `CORS_ORIGIN`    | No       | `http://localhost:5173` | Origin allowed to call the API |
-| `NODE_ENV`       | No       | `development`           | Environment                    |
+| Variable         | Required | Default                                       | Description                                      |
+| ---------------- | -------- | --------------------------------------------- | ------------------------------------------------ |
+| `MONGO_URI`      | Yes      |                                               | MongoDB connection string                        |
+| `JWT_SECRET`     | Yes      |                                               | Secret used to sign tokens                       |
+| `JWT_EXPIRES_IN` | No       | `7d`                                          | Token lifetime                                   |
+| `PORT`           | No       | `3000`                                        | API port                                         |
+| `CORS_ORIGIN`    | No       | `http://localhost:5173,http://localhost:4173` | Origins allowed to call the API, comma-separated |
+| `NODE_ENV`       | No       | `development`                                 | Environment                                      |
 
 Then copy `client/.env.example` to `client/.env`. It contains `VITE_API_URL`, the API base URL (`http://localhost:3000/api` by default).
 

@@ -12,7 +12,7 @@ import cors from "cors";
 const app = express();
 const PORT = env.port;
 
-app.use(cors({ origin: env.corsOrigin }));
+app.use(cors({ origin: env.corsOrigins }));
 app.use(express.json());
 
 app.get("/health", (_req, res) => {
