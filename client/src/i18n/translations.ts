@@ -37,9 +37,23 @@ const en = {
     "composer.publishing": "Posting...",
 
     "posts.loadMore": "Load more",
+    "posts.delete": "Delete",
+    "posts.deleting": "Deleting...",
+    "posts.confirmDelete": "Delete this post? This can't be undone.",
 
-    "profile.title": "@{username}",
-    "profile.comingSoon": "The profile page is coming soon.",
+    "profile.joined": "Joined {date}",
+    "profile.followersOne": "{count} follower",
+    "profile.followersOther": "{count} followers",
+    "profile.following": "{count} following",
+    "profile.follow": "Follow",
+    "profile.unfollow": "Unfollow",
+    "profile.editBio": "Edit bio",
+    "profile.bioLabel": "Bio",
+    "profile.save": "Save",
+    "profile.saving": "Saving...",
+    "profile.cancel": "Cancel",
+    "profile.posts": "Posts",
+    "profile.empty": "No posts yet.",
 
     "errors.network": "Could not connect to the server",
     "errors.invalidCredentials": "Invalid email or password",
@@ -48,6 +62,7 @@ const en = {
     "errors.passwordTooShort": "Password must be at least 8 characters long",
     "errors.missingFields": "Please fill in all the fields",
     "errors.textRequired": "Write something before posting",
+    "errors.userNotFound": "This user doesn't exist",
 };
 
 export type TranslationKey = keyof typeof en;
@@ -83,9 +98,23 @@ const es: Record<TranslationKey, string> = {
     "composer.publishing": "Publicando...",
 
     "posts.loadMore": "Cargar más",
+    "posts.delete": "Borrar",
+    "posts.deleting": "Borrando...",
+    "posts.confirmDelete": "¿Borrar este post? No se puede deshacer.",
 
-    "profile.title": "@{username}",
-    "profile.comingSoon": "La página de perfil llega pronto.",
+    "profile.joined": "Se unió en {date}",
+    "profile.followersOne": "{count} seguidor",
+    "profile.followersOther": "{count} seguidores",
+    "profile.following": "{count} siguiendo",
+    "profile.follow": "Seguir",
+    "profile.unfollow": "Dejar de seguir",
+    "profile.editBio": "Editar bio",
+    "profile.bioLabel": "Bio",
+    "profile.save": "Guardar",
+    "profile.saving": "Guardando...",
+    "profile.cancel": "Cancelar",
+    "profile.posts": "Posts",
+    "profile.empty": "Todavía no hay posts.",
 
     "errors.network": "No se pudo conectar con el servidor",
     "errors.invalidCredentials": "Email o contraseña incorrectos",
@@ -94,6 +123,7 @@ const es: Record<TranslationKey, string> = {
     "errors.passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
     "errors.missingFields": "Completá todos los campos",
     "errors.textRequired": "Escribí algo antes de publicar",
+    "errors.userNotFound": "Este usuario no existe",
 };
 
 export const translations: Record<Language, Record<TranslationKey, string>> = { en, es };

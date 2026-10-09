@@ -10,6 +10,7 @@ export interface PaginatedPosts {
     error: unknown;
     loadMore: () => Promise<void>;
     addPost: (post: Post) => void;
+    deletePost: (id: string) => Promise<void>;
 }
 
 // Loads a paginated post list (feed, all posts, a user's posts) and keeps the cursor.
@@ -65,6 +66,11 @@ export function usePaginatedPosts(path: string): PaginatedPosts {
         setPosts((current) => [post, ...current]);
     }
 
+    async function deletePost(id: string) {
+        await api<void>(`/posts/${id}`, { method: "DELETE" });
+        setPosts((current) => current.filter((post) => post._id !== id));
+    }
+
     return {
         posts,
         loading,
@@ -73,5 +79,6 @@ export function usePaginatedPosts(path: string): PaginatedPosts {
         error,
         loadMore,
         addPost,
+        deletePost,
     };
 }

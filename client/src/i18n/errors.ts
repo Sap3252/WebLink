@@ -11,6 +11,7 @@ const API_ERROR_KEYS: Record<string, TranslationKey> = {
     "username, email and password are required": "errors.missingFields",
     "email and password are required": "errors.missingFields",
     "text is required": "errors.textRequired",
+    "User not found": "errors.userNotFound",
 };
 
 export function getErrorMessage(error: unknown, t: TranslateFn): string {

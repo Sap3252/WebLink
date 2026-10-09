@@ -1,3 +1,4 @@
+import { useAuth } from "../auth/useAuth";
 import { getErrorMessage } from "../i18n/errors";
 import { useTranslation } from "../i18n/useTranslation";
 import { PostCard } from "./PostCard";
@@ -10,6 +11,7 @@ interface PostListProps {
 }
 
 export function PostList({ list, emptyText }: PostListProps) {
+    const { user } = useAuth();
     const { t } = useTranslation();
 
     if (list.loading) {
@@ -22,7 +24,13 @@ export function PostList({ list, emptyText }: PostListProps) {
                 <p className={styles.empty}>{emptyText}</p>
             )}
             {list.posts.map((post) => (
-                <PostCard key={post._id} post={post} />
+                <PostCard
+                    key={post._id}
+                    post={post}
+                    onDelete={
+                        post.author._id === user?._id ? () => list.deletePost(post._id) : undefined
+                    }
+                />
             ))}
             {list.error !== null && (
                 <p role="alert" className={styles.error}>
