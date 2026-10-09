@@ -13,10 +13,10 @@ if (!Number.isInteger(port) || port <= 0) {
 }
 
 export const env = {
-    nodeEnv: process.env.NODE_ENV ?? 'development',
+    nodeEnv: process.env.NODE_ENV ?? "development",
     port,
-    mongodbUri: required('MONGO_URI'),
-    jwtSecret: required('JWT_SECRET'),
-    jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '7d',
-    corsOrigin: process.env.CORS_ORIGIN ?? 'http://localhost:5173'
+    mongodbUri: required("MONGO_URI"),
+    jwtSecret: required("JWT_SECRET"),
+    jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "7d",
+    corsOrigin: process.env.CORS_ORIGIN ?? "http://localhost:5173",
 } as const;

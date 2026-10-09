@@ -5,13 +5,13 @@ import User from "../models/User.js";
 import jwt, { type SignOptions } from "jsonwebtoken";
 import { env } from "../config/env.js";
 
-
 const SALT_ROUNDS = 10;
 const MIN_PASSWORD_LENGTH = 8;
 
 function isDuplicateKeyError(error: unknown): boolean {
-    return typeof error === "object" && error !== null &&
-        (error as { code?: unknown }).code === 11000;
+    return (
+        typeof error === "object" && error !== null && (error as { code?: unknown }).code === 11000
+    );
 }
 
 export async function register(req: Request, res: Response): Promise<void> {
@@ -23,7 +23,9 @@ export async function register(req: Request, res: Response): Promise<void> {
     }
 
     if (password.length < MIN_PASSWORD_LENGTH) {
-        res.status(400).json({ error: `Password must be at least ${MIN_PASSWORD_LENGTH} characters long` });
+        res.status(400).json({
+            error: `Password must be at least ${MIN_PASSWORD_LENGTH} characters long`,
+        });
         return;
     }
 
@@ -56,18 +58,18 @@ export async function login(req: Request, res: Response): Promise<void> {
     }
 
     try {
-        const user = await User.findOne({ email: email.trim().toLowerCase() }).select("+passwordHash");
+        const user = await User.findOne({ email: email.trim().toLowerCase() }).select(
+            "+passwordHash",
+        );
 
         if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
             res.status(401).json({ error: "Invalid credentials" });
             return;
         }
 
-        const token = jwt.sign(
-            { sub: user._id.toString() },
-            env.jwtSecret,
-            { expiresIn: env.jwtExpiresIn as NonNullable<SignOptions["expiresIn"]> }
-        );
+        const token = jwt.sign({ sub: user._id.toString() }, env.jwtSecret, {
+            expiresIn: env.jwtExpiresIn as NonNullable<SignOptions["expiresIn"]>,
+        });
 
         res.json({ token, user });
     } catch (error) {
@@ -91,4 +93,3 @@ export async function me(req: Request, res: Response): Promise<void> {
         res.status(500).json({ error: "Internal server error" });
     }
 }
-

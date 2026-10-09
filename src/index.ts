@@ -13,9 +13,9 @@ const PORT = env.port;
 app.use(express.json());
 
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok" });
+    res.json({ status: "ok" });
 });
-app.use(cors({origin: env.corsOrigin}));
+app.use(cors({ origin: env.corsOrigin }));
 
 app.use(express.json());
 
@@ -28,12 +28,12 @@ app.use("/api/users", userRoutes);
 app.use("/api/feed", feedRoutes);
 
 try {
-await connectDB();
+    await connectDB();
 } catch (error) {
-  console.error("Error connecting to MongoDB:", error);
-  process.exit(1);
+    console.error("Error connecting to MongoDB:", error);
+    process.exit(1);
 }
 
 app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+    console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });

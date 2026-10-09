@@ -56,7 +56,8 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
     const data = await res.json().catch(() => null);
 
     if (!res.ok) {
-        const message = (data as { error?: string } | null)?.error ?? `Request failed (${res.status})`;
+        const message =
+            (data as { error?: string } | null)?.error ?? `Request failed (${res.status})`;
         throw new ApiError(res.status, message);
     }
 

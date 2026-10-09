@@ -7,8 +7,9 @@ import Post, { type IPost } from "../models/Post.js";
 import { parseCursorParams, nextCursorOf } from "../utils/pagination.js";
 
 function isDuplicateKeyError(error: unknown): boolean {
-    return typeof error === "object" && error !== null &&
-        (error as { code?: unknown }).code === 11000;
+    return (
+        typeof error === "object" && error !== null && (error as { code?: unknown }).code === 11000
+    );
 }
 
 export async function followUser(req: Request, res: Response): Promise<void> {
@@ -120,7 +121,7 @@ export async function updateMe(req: Request, res: Response): Promise<void> {
     try {
         const user = await User.findByIdAndUpdate(userId, updates, {
             new: true,
-            runValidators: true
+            runValidators: true,
         });
 
         if (!user) {
@@ -166,14 +167,14 @@ export async function getUserProfile(req: Request, res: Response): Promise<void>
         const [followers, following, follow] = await Promise.all([
             Follow.countDocuments({ following: user._id }),
             Follow.countDocuments({ follower: user._id }),
-            viewer ? Follow.exists({ follower: viewer, following: user._id }) : null
+            viewer ? Follow.exists({ follower: viewer, following: user._id }) : null,
         ]);
 
         res.json({
             ...user.toJSON(),
             followers,
             following,
-            isFollowing: viewer ? Boolean(follow) : null
+            isFollowing: viewer ? Boolean(follow) : null,
         });
     } catch (error) {
         console.error("getUserProfile failed:", error);
@@ -230,7 +231,11 @@ export async function getFollowing(req: Request, res: Response): Promise<void> {
     await listRelations(req, res, "following");
 }
 
-async function listRelations(req: Request, res: Response, kind: "followers" | "following"): Promise<void> {
+async function listRelations(
+    req: Request,
+    res: Response,
+    kind: "followers" | "following",
+): Promise<void> {
     const id = req.params.id;
 
     if (typeof id !== "string" || !mongoose.isValidObjectId(id)) {
@@ -252,4 +257,3 @@ async function listRelations(req: Request, res: Response, kind: "followers" | "f
         res.status(500).json({ error: "Internal server error" });
     }
 }
-

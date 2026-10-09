@@ -10,9 +10,8 @@ export interface CursorParams {
 
 export function parseCursorParams(req: Request): CursorParams | null {
     const rawLimit = Number(req.query.limit);
-    const limit = Number.isInteger(rawLimit) && rawLimit > 0
-        ? Math.min(rawLimit, MAX_LIMIT)
-        : DEFAULT_LIMIT;
+    const limit =
+        Number.isInteger(rawLimit) && rawLimit > 0 ? Math.min(rawLimit, MAX_LIMIT) : DEFAULT_LIMIT;
 
     const before = req.query.before;
 
@@ -38,4 +37,3 @@ export function nextCursorOf(items: { createdAt: Date }[], limit: number): strin
 
     return items.length === limit && last ? last.createdAt.toISOString() : null;
 }
-

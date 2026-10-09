@@ -4,7 +4,6 @@ import type { QueryFilter } from "mongoose";
 import Post, { type IPost } from "../models/Post.js";
 import { parseCursorParams, nextCursorOf } from "../utils/pagination.js";
 
-
 //POST /posts
 export async function createPost(req: Request, res: Response): Promise<void> {
     const author = req.userId;
@@ -41,7 +40,7 @@ export async function createPost(req: Request, res: Response): Promise<void> {
 export async function getPost(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
 
-     if (!mongoose.isValidObjectId(id)) {
+    if (!mongoose.isValidObjectId(id)) {
         res.status(400).json({ error: "Invalid post id" });
         return;
     }
@@ -71,13 +70,12 @@ export async function deletePost(req: Request, res: Response): Promise<void> {
 
     const { id } = req.params;
 
-    if(!mongoose.isValidObjectId(id))
-    {
+    if (!mongoose.isValidObjectId(id)) {
         res.status(400).json({ error: "Invalid post id" });
         return;
     }
 
-    try { 
+    try {
         const post = await Post.findById(id);
 
         if (!post) {
@@ -92,7 +90,6 @@ export async function deletePost(req: Request, res: Response): Promise<void> {
 
         await post.deleteOne();
         res.status(204).json({ message: "Post deleted successfully" });
-
     } catch (error) {
         console.error("deletePost failed:", error);
         res.status(500).json({ error: "Internal server error" });
