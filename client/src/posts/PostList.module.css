@@ -1,0 +1,12 @@
+.empty {
+    color: #666;
+}
+
+.error {
+    color: #b00020;
+}
+
+.loadMore {
+    display: block;
+    margin: 1rem auto 0;
+}

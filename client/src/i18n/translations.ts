@@ -29,7 +29,14 @@ const en = {
     "register.loginLink": "Log in",
 
     "feed.title": "Feed",
-    "feed.comingSoon": "Hi, {username}! The feed is coming soon.",
+    "feed.empty": "Your feed is empty. Follow someone or publish your first post.",
+
+    "composer.label": "New post",
+    "composer.placeholder": "What's on your mind?",
+    "composer.publish": "Post",
+    "composer.publishing": "Posting...",
+
+    "posts.loadMore": "Load more",
 
     "profile.title": "@{username}",
     "profile.comingSoon": "The profile page is coming soon.",
@@ -40,6 +47,7 @@ const en = {
     "errors.emailTaken": "That email is already registered",
     "errors.passwordTooShort": "Password must be at least 8 characters long",
     "errors.missingFields": "Please fill in all the fields",
+    "errors.textRequired": "Write something before posting",
 };
 
 export type TranslationKey = keyof typeof en;
@@ -67,7 +75,14 @@ const es: Record<TranslationKey, string> = {
     "register.loginLink": "Iniciar sesión",
 
     "feed.title": "Inicio",
-    "feed.comingSoon": "¡Hola, {username}! El feed llega pronto.",
+    "feed.empty": "Tu feed está vacío. Seguí a alguien o publicá tu primer post.",
+
+    "composer.label": "Nuevo post",
+    "composer.placeholder": "¿Qué está pasando?",
+    "composer.publish": "Publicar",
+    "composer.publishing": "Publicando...",
+
+    "posts.loadMore": "Cargar más",
 
     "profile.title": "@{username}",
     "profile.comingSoon": "La página de perfil llega pronto.",
@@ -78,6 +93,7 @@ const es: Record<TranslationKey, string> = {
     "errors.emailTaken": "Ese email ya está registrado",
     "errors.passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
     "errors.missingFields": "Completá todos los campos",
+    "errors.textRequired": "Escribí algo antes de publicar",
 };
 
 export const translations: Record<Language, Record<TranslationKey, string>> = { en, es };

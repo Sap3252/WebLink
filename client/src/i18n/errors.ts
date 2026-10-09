@@ -10,6 +10,7 @@ const API_ERROR_KEYS: Record<string, TranslationKey> = {
     "Password must be at least 8 characters long": "errors.passwordTooShort",
     "username, email and password are required": "errors.missingFields",
     "email and password are required": "errors.missingFields",
+    "text is required": "errors.textRequired",
 };
 
 export function getErrorMessage(error: unknown, t: TranslateFn): string {
