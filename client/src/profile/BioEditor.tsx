@@ -45,10 +45,10 @@ export function BioEditor({ initialBio, onSaved, onCancel }: BioEditorProps) {
             />
             <div className={styles.editorActions}>
                 <span className={styles.meta}>{MAX_BIO_LENGTH - bio.length}</span>
-                <button type="button" onClick={onCancel} disabled={saving}>
+                <button type="button" className="btn-ghost" onClick={onCancel} disabled={saving}>
                     {t("profile.cancel")}
                 </button>
-                <button type="submit" disabled={saving}>
+                <button type="submit" className="btn-primary" disabled={saving}>
                     {saving ? t("profile.saving") : t("profile.save")}
                 </button>
             </div>

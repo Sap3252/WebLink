@@ -8,28 +8,31 @@ import { FeedPage } from "./pages/FeedPage";
 import { LoginPage } from "./pages/LoginPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { ThemeProvider } from "./theme/ThemeProvider";
 
 function App() {
     return (
-        <LanguageProvider>
-            <AuthProvider>
-                <BrowserRouter>
-                    <Routes>
-                        <Route element={<Layout />}>
-                            <Route element={<GuestRoute />}>
-                                <Route path="/login" element={<LoginPage />} />
-                                <Route path="/register" element={<RegisterPage />} />
+        <ThemeProvider>
+            <LanguageProvider>
+                <AuthProvider>
+                    <BrowserRouter>
+                        <Routes>
+                            <Route element={<Layout />}>
+                                <Route element={<GuestRoute />}>
+                                    <Route path="/login" element={<LoginPage />} />
+                                    <Route path="/register" element={<RegisterPage />} />
+                                </Route>
+                                <Route element={<ProtectedRoute />}>
+                                    <Route path="/" element={<FeedPage />} />
+                                </Route>
+                                <Route path="/u/:username" element={<ProfilePage />} />
+                                <Route path="*" element={<Navigate to="/" replace />} />
                             </Route>
-                            <Route element={<ProtectedRoute />}>
-                                <Route path="/" element={<FeedPage />} />
-                            </Route>
-                            <Route path="/u/:username" element={<ProfilePage />} />
-                            <Route path="*" element={<Navigate to="/" replace />} />
-                        </Route>
-                    </Routes>
-                </BrowserRouter>
-            </AuthProvider>
-        </LanguageProvider>
+                        </Routes>
+                    </BrowserRouter>
+                </AuthProvider>
+            </LanguageProvider>
+        </ThemeProvider>
     );
 }
 

@@ -1,19 +1,28 @@
 .switcher {
     display: inline-flex;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    overflow: hidden;
+    padding: 0.2rem;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-pill);
+    background: var(--glass-bg);
 }
 
 .switcher button {
-    padding: 0.25rem 0.5rem;
+    padding: 0.3rem 0.7rem;
     border: none;
     background: transparent;
-    font: inherit;
-    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.switcher button:hover:not(:disabled) {
+    box-shadow: none;
+    color: var(--text);
 }
 
 .switcher button[aria-pressed="true"] {
-    background: #222;
-    color: #fff;
+    background: var(--accent-gradient);
+    color: var(--on-accent);
+    box-shadow: 0 4px 12px rgba(124, 92, 255, 0.35);
 }

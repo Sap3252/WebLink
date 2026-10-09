@@ -1,7 +1,11 @@
 import { Link, Outlet } from "react-router";
 import { useAuth } from "../auth/useAuth";
 import { useTranslation } from "../i18n/useTranslation";
+import { AuroraBackground } from "./AuroraBackground";
+import { Avatar } from "./Avatar";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { Logo } from "./Logo";
+import { ThemeToggle } from "./ThemeToggle";
 import styles from "./Layout.module.css";
 
 export function Layout() {
@@ -10,16 +14,22 @@ export function Layout() {
 
     return (
         <>
-            <header className={styles.header}>
-                <Link to="/" className={styles.brand}>
-                    WebLink
-                </Link>
+            <AuroraBackground />
+            <header className={`glass ${styles.header}`}>
+                <Logo />
                 <nav className={styles.nav}>
                     <LanguageSwitcher />
+                    <ThemeToggle />
                     {user && (
                         <>
-                            <Link to={`/u/${user.username}`}>@{user.username}</Link>
-                            <button type="button" onClick={logout}>
+                            <Link
+                                to={`/u/${user.username}`}
+                                className={styles.me}
+                                title={`@${user.username}`}
+                            >
+                                <Avatar username={user.username} size={36} />
+                            </Link>
+                            <button type="button" className="btn-ghost" onClick={logout}>
                                 {t("nav.logout")}
                             </button>
                         </>

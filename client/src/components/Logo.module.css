@@ -1,0 +1,91 @@
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    text-decoration: none;
+}
+
+.logo:hover {
+    text-decoration: none;
+}
+
+.icon {
+    width: 2rem;
+    height: 2rem;
+    overflow: visible;
+    transition: transform 0.4s var(--ease-bounce);
+}
+
+.logo:hover .icon {
+    transform: scale(1.08);
+}
+
+/* pathLength="1" on each line makes a dash of 1 cover it exactly, so moving the
+   offset from 0 to 1 erases the line and back to 0 draws it again. */
+.link {
+    stroke: url(#logo-gradient);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+}
+
+.node {
+    fill: url(#logo-gradient);
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.logo:hover .link,
+.logo:focus-visible .link {
+    animation: reconnect 1.8s ease-in-out infinite;
+}
+
+.logo:hover .node,
+.logo:focus-visible .node {
+    animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes reconnect {
+    0%,
+    15% {
+        stroke-dashoffset: 0;
+    }
+
+    45%,
+    60% {
+        stroke-dashoffset: 1;
+    }
+
+    90%,
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes pulse {
+    0%,
+    15%,
+    90%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.75);
+    }
+
+    70% {
+        transform: scale(1.2);
+    }
+}
+
+.wordmark {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}

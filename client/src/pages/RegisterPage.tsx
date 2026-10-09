@@ -34,7 +34,7 @@ export function RegisterPage() {
     }
 
     return (
-        <section className={styles.card}>
+        <section className={`glass ${styles.card}`}>
             <h1>{t("register.title")}</h1>
             <form className={styles.form} onSubmit={handleSubmit}>
                 <FormField
@@ -68,7 +68,7 @@ export function RegisterPage() {
                         {getErrorMessage(error, t)}
                     </p>
                 )}
-                <button type="submit" disabled={submitting}>
+                <button type="submit" className="btn-primary" disabled={submitting}>
                     {submitting ? t("register.submitting") : t("register.submit")}
                 </button>
             </form>

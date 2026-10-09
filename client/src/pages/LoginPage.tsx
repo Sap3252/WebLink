@@ -30,7 +30,7 @@ export function LoginPage() {
     }
 
     return (
-        <section className={styles.card}>
+        <section className={`glass ${styles.card}`}>
             <h1>{t("login.title")}</h1>
             {sessionExpired && (
                 <p role="status" className={styles.notice}>
@@ -59,7 +59,7 @@ export function LoginPage() {
                         {getErrorMessage(error, t)}
                     </p>
                 )}
-                <button type="submit" disabled={submitting}>
+                <button type="submit" className="btn-primary" disabled={submitting}>
                     {submitting ? t("login.submitting") : t("login.submit")}
                 </button>
             </form>

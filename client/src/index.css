@@ -1,8 +1,231 @@
+/* Design tokens: every component reads these variables, so the theme lives here. */
+:root {
+    --font: "Plus Jakarta Sans", system-ui, sans-serif;
+
+    --accent: #7c5cff;
+    --accent-strong: #6a46f5;
+    --accent-gradient: linear-gradient(135deg, #7c5cff 0%, #b35cff 50%, #ff5ca8 100%);
+    --on-accent: #ffffff;
+
+    --radius-sm: 12px;
+    --radius: 18px;
+    --radius-lg: 24px;
+    --radius-pill: 999px;
+
+    --ease-bounce: cubic-bezier(0.22, 1.25, 0.36, 1);
+    --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    color-scheme: light;
+    --bg: #f3f0ff;
+    --text: #1d1833;
+    --text-muted: #6b6488;
+    --danger: #d6336c;
+    --warning: #d97706;
+
+    --glass-bg: rgba(255, 255, 255, 0.42);
+    --glass-bg-solid: #f7f5ff;
+    --glass-border: rgba(255, 255, 255, 0.8);
+    --glass-shadow: 0 8px 32px rgba(76, 52, 160, 0.12);
+    --glass-shadow-hover: 0 14px 40px rgba(76, 52, 160, 0.2);
+    --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+    --field-bg: rgba(255, 255, 255, 0.7);
+    --field-border: rgba(124, 92, 255, 0.25);
+    --focus-ring: 0 0 0 3px rgba(124, 92, 255, 0.35);
+
+    --notice-bg: rgba(255, 196, 0, 0.18);
+    --notice-border: rgba(217, 119, 6, 0.4);
+
+    --blob-1: #a78bfa;
+    --blob-2: #f472b6;
+    --blob-3: #67e8f9;
+    --blob-4: #93c5fd;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0c0a1d;
+    --text: #f2effe;
+    --text-muted: #a8a2c6;
+    --danger: #ff6b9a;
+    --warning: #fbbf24;
+
+    --glass-bg: rgba(32, 26, 66, 0.36);
+    --glass-bg-solid: #1b1636;
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    --glass-shadow-hover: 0 14px 40px rgba(0, 0, 0, 0.6);
+    --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+    --field-bg: rgba(255, 255, 255, 0.06);
+    --field-border: rgba(255, 255, 255, 0.16);
+    --focus-ring: 0 0 0 3px rgba(167, 139, 250, 0.45);
+
+    --notice-bg: rgba(251, 191, 36, 0.12);
+    --notice-border: rgba(251, 191, 36, 0.35);
+
+    --blob-1: #7c3aed;
+    --blob-2: #db2777;
+    --blob-3: #0891b2;
+    --blob-4: #4f46e5;
+}
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    font-family: system-ui, sans-serif;
+    min-height: 100vh;
+    overflow-x: clip;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    line-height: 1.5;
+    transition:
+        background-color 0.3s,
+        color 0.3s;
+}
+
+h1,
+h2 {
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+}
+
+h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Frosted glass surface. Without backdrop-filter support it falls back to a solid color. */
+.glass {
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    background: var(--glass-bg);
+    box-shadow: var(--glass-shadow), var(--glass-highlight);
+    backdrop-filter: blur(12px) saturate(170%);
+    -webkit-backdrop-filter: blur(12px) saturate(170%);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass {
+        background: var(--glass-bg-solid);
+    }
+}
+
+/* Buttons: glass by default, .btn-primary for the main action, .btn-ghost for quiet ones. */
+button {
+    padding: 0.55rem 1.1rem;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-pill);
+    background: var(--glass-bg);
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition:
+        transform 0.15s var(--ease-out),
+        box-shadow 0.2s,
+        background 0.2s,
+        opacity 0.2s;
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--glass-shadow);
+}
+
+button:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.btn-primary {
+    border-color: transparent;
+    background: var(--accent-gradient);
+    color: var(--on-accent);
+    box-shadow: 0 6px 20px rgba(124, 92, 255, 0.35);
+}
+
+.btn-primary:hover:not(:disabled) {
+    box-shadow: 0 10px 28px rgba(179, 92, 255, 0.45);
+}
+
+.btn-ghost {
+    border-color: transparent;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.btn-ghost:hover:not(:disabled) {
+    box-shadow: none;
+    background: var(--glass-bg);
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--field-border);
+    border-radius: var(--radius-sm);
+    background: var(--field-bg);
+    color: var(--text);
+    font: inherit;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
+
+textarea {
+    resize: vertical;
+}
+
+::placeholder {
+    color: var(--text-muted);
+}
+
+input:focus,
+textarea:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }

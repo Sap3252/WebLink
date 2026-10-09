@@ -1,0 +1,91 @@
+.aurora {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.blob1,
+.blob2,
+.blob3,
+.blob4 {
+    position: absolute;
+    width: 34vmax;
+    height: 34vmax;
+    border-radius: 50%;
+    opacity: 0.75;
+    filter: blur(45px);
+    will-change: transform;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+.blob1 {
+    top: -8vmax;
+    left: -6vmax;
+    background: var(--blob-1);
+    animation-name: drift-a;
+    animation-duration: 14s;
+}
+
+.blob2 {
+    top: 8vmax;
+    right: -8vmax;
+    background: var(--blob-2);
+    animation-name: drift-b;
+    animation-duration: 17s;
+    animation-delay: -5s;
+}
+
+.blob3 {
+    bottom: -10vmax;
+    left: 20vw;
+    background: var(--blob-3);
+    opacity: 0.6;
+    animation-name: drift-a;
+    animation-duration: 19s;
+    animation-delay: -9s;
+    animation-direction: reverse;
+}
+
+.blob4 {
+    top: 40vh;
+    left: -10vmax;
+    background: var(--blob-4);
+    animation-name: drift-b;
+    animation-duration: 15s;
+    animation-delay: -3s;
+    animation-direction: reverse;
+}
+
+/* Long paths across the screen, so the movement is visible behind the glass. */
+@keyframes drift-a {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(30vw, 20vh) scale(1.2);
+    }
+
+    66% {
+        transform: translate(-8vw, 40vh) scale(0.85);
+    }
+}
+
+@keyframes drift-b {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(-28vw, 25vh) scale(0.85);
+    }
+
+    66% {
+        transform: translate(10vw, -15vh) scale(1.2);
+    }
+}

@@ -36,6 +36,7 @@ export function FollowButton({ profile, onChange }: FollowButtonProps) {
         <div className={styles.action}>
             <button
                 type="button"
+                className={isFollowing ? undefined : "btn-primary"}
                 aria-pressed={isFollowing}
                 disabled={pending}
                 onClick={handleClick}

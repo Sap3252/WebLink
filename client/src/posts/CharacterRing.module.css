@@ -1,0 +1,53 @@
+.ring {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.svg {
+    width: 1.6rem;
+    height: 1.6rem;
+    transform: rotate(-90deg);
+    transition: transform 0.3s var(--ease-bounce);
+}
+
+.track,
+.progress {
+    fill: none;
+    stroke-width: 2.5;
+}
+
+.track {
+    stroke: var(--field-border);
+}
+
+.progress {
+    stroke: var(--accent);
+    stroke-linecap: round;
+    transition:
+        stroke-dashoffset 0.2s,
+        stroke 0.2s;
+}
+
+.warn .svg,
+.full .svg {
+    transform: rotate(-90deg) scale(1.15);
+}
+
+.warn .progress {
+    stroke: var(--warning);
+}
+
+.warn .count {
+    color: var(--warning);
+}
+
+.full .progress {
+    stroke: var(--danger);
+}
+
+.full .count {
+    color: var(--danger);
+}

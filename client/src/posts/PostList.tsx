@@ -15,18 +15,19 @@ export function PostList({ list, emptyText }: PostListProps) {
     const { t } = useTranslation();
 
     if (list.loading) {
-        return <p>{t("common.loading")}</p>;
+        return <p className={styles.loading}>{t("common.loading")}</p>;
     }
 
     return (
         <div>
             {list.posts.length === 0 && list.error === null && (
-                <p className={styles.empty}>{emptyText}</p>
+                <p className={`glass ${styles.empty}`}>{emptyText}</p>
             )}
-            {list.posts.map((post) => (
+            {list.posts.map((post, index) => (
                 <PostCard
                     key={post._id}
                     post={post}
+                    enterIndex={index}
                     onDelete={
                         post.author._id === user?._id ? () => list.deletePost(post._id) : undefined
                     }

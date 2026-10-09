@@ -9,6 +9,8 @@ export function isLanguage(value: unknown): value is Language {
 const en = {
     "common.loading": "Loading...",
     "language.label": "Language",
+    "theme.toDark": "Switch to dark mode",
+    "theme.toLight": "Switch to light mode",
     "nav.logout": "Log out",
 
     "fields.username": "Username",
@@ -36,6 +38,7 @@ const en = {
     "composer.placeholder": "What's on your mind?",
     "composer.publish": "Post",
     "composer.publishing": "Posting...",
+    "composer.remaining": "{count} characters left",
 
     "posts.loadMore": "Load more",
     "posts.delete": "Delete",
@@ -71,6 +74,8 @@ export type TranslationKey = keyof typeof en;
 const es: Record<TranslationKey, string> = {
     "common.loading": "Cargando...",
     "language.label": "Idioma",
+    "theme.toDark": "Cambiar a modo oscuro",
+    "theme.toLight": "Cambiar a modo claro",
     "nav.logout": "Cerrar sesión",
 
     "fields.username": "Nombre de usuario",
@@ -98,6 +103,7 @@ const es: Record<TranslationKey, string> = {
     "composer.placeholder": "¿Qué está pasando?",
     "composer.publish": "Publicar",
     "composer.publishing": "Publicando...",
+    "composer.remaining": "Quedan {count} caracteres",
 
     "posts.loadMore": "Cargar más",
     "posts.delete": "Borrar",
