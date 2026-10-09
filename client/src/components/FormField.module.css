@@ -1,0 +1,14 @@
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.field input {
+    padding: 0.5rem;
+    font: inherit;
+}
+
+.hint {
+    color: #666;
+}
