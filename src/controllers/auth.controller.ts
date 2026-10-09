@@ -23,8 +23,9 @@ export async function register(req: Request, res: Response): Promise<void> {
 
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
     const user = await User.create({ username, email, passwordHash });
+    const token = signToken(user._id.toString());
 
-    res.status(201).json(user);
+    res.status(201).json({ token, user });
 }
 
 export async function login(req: Request, res: Response): Promise<void> {
