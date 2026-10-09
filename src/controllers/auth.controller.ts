@@ -1,8 +1,7 @@
 import type { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User from "../models/User.js";
-import jwt, { type SignOptions } from "jsonwebtoken";
-import { env } from "../config/env.js";
+import { signToken } from "../utils/token.js";
 
 const SALT_ROUNDS = 10;
 const MIN_PASSWORD_LENGTH = 8;
@@ -43,9 +42,7 @@ export async function login(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    const token = jwt.sign({ sub: user._id.toString() }, env.jwtSecret, {
-        expiresIn: env.jwtExpiresIn as NonNullable<SignOptions["expiresIn"]>,
-    });
+    const token = signToken(user._id.toString());
 
     res.json({ token, user });
 }

@@ -11,6 +11,8 @@ export interface IUser {
 
 export type UserDocument = HydratedDocument<IUser>;
 
+export const PUBLIC_USER_FIELDS = "username bio";
+
 const userSchema = new Schema<IUser>(
     {
         username: {

@@ -1,32 +1,31 @@
 import type { Request, Response } from "express";
 import mongoose from "mongoose";
-import type { QueryFilter } from "mongoose";
-import Post, { type IPost } from "../models/Post.js";
-import { parseCursorParams, nextCursorOf } from "../utils/pagination.js";
+import Post from "../models/Post.js";
+import { PUBLIC_USER_FIELDS } from "../models/User.js";
+import { findPostsPage } from "../services/post.service.js";
+import { parseCursorParams } from "../utils/pagination.js";
 
-//POST /posts
 export async function createPost(req: Request, res: Response): Promise<void> {
     const author = req.userId;
 
     if (!author) {
-        res.status(401).json({ error: "Unauthorized" });
+        res.status(401).json({ error: "Authentication required" });
         return;
     }
 
     const { text } = req.body ?? {};
 
-    if (typeof text !== "string" || typeof author !== "string") {
-        res.status(400).json({ error: "text and author are required" });
+    if (typeof text !== "string") {
+        res.status(400).json({ error: "text is required" });
         return;
     }
 
     const post = await Post.create({ text: text.trim(), author });
-    await post.populate("author", "username bio");
+    await post.populate("author", PUBLIC_USER_FIELDS);
 
     res.status(201).json(post);
 }
 
-//GET /posts/:id
 export async function getPost(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
 
@@ -35,7 +34,7 @@ export async function getPost(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    const post = await Post.findById(id).populate("author", "username bio");
+    const post = await Post.findById(id).populate("author", PUBLIC_USER_FIELDS);
 
     if (!post) {
         res.status(404).json({ error: "Post not found" });
@@ -49,7 +48,7 @@ export async function deletePost(req: Request, res: Response): Promise<void> {
     const userId = req.userId;
 
     if (!userId) {
-        res.status(401).json({ error: "Unauthorized" });
+        res.status(401).json({ error: "Authentication required" });
         return;
     }
 
@@ -73,7 +72,7 @@ export async function deletePost(req: Request, res: Response): Promise<void> {
     }
 
     await post.deleteOne();
-    res.status(204).json({ message: "Post deleted successfully" });
+    res.status(204).send();
 }
 
 export async function listPosts(req: Request, res: Response): Promise<void> {
@@ -84,16 +83,5 @@ export async function listPosts(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    const filter: QueryFilter<IPost> = {};
-
-    if (page.cursor) {
-        filter.createdAt = { $lt: page.cursor };
-    }
-
-    const posts = await Post.find(filter)
-        .sort({ createdAt: -1 })
-        .limit(page.limit)
-        .populate("author", "username bio");
-
-    res.json({ posts, nextCursor: nextCursorOf(posts, page.limit) });
+    res.json(await findPostsPage({}, page));
 }

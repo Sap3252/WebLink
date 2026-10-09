@@ -1,8 +1,7 @@
 import type { Request, Response } from "express";
-import type { QueryFilter } from "mongoose";
 import Follow from "../models/Follow.js";
-import Post, { type IPost } from "../models/Post.js";
-import { parseCursorParams, nextCursorOf } from "../utils/pagination.js";
+import { findPostsPage } from "../services/post.service.js";
+import { parseCursorParams } from "../utils/pagination.js";
 
 export async function getFeed(req: Request, res: Response): Promise<void> {
     const userId = req.userId;
@@ -24,16 +23,5 @@ export async function getFeed(req: Request, res: Response): Promise<void> {
 
     authors.push(userId);
 
-    const filter: QueryFilter<IPost> = { author: { $in: authors } };
-
-    if (page.cursor) {
-        filter.createdAt = { $lt: page.cursor };
-    }
-
-    const posts = await Post.find(filter)
-        .sort({ createdAt: -1 })
-        .limit(page.limit)
-        .populate("author", "username bio");
-
-    res.json({ posts, nextCursor: nextCursorOf(posts, page.limit) });
+    res.json(await findPostsPage({ author: { $in: authors } }, page));
 }
