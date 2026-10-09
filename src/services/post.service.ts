@@ -1,6 +1,6 @@
 import type { QueryFilter } from "mongoose";
 import Link from "../models/Link.js";
-import Post, { type IPost, type PostDocument } from "../models/Post.js";
+import Post, { ACTIVE_POST, type IPost, type PostDocument } from "../models/Post.js";
 import { PUBLIC_USER_FIELDS } from "../models/User.js";
 import { nextCursorOf, type CursorParams } from "../utils/pagination.js";
 
@@ -32,7 +32,7 @@ export async function findPostsPage(
     page: CursorParams,
     viewerId: string | undefined,
 ) {
-    const pageFilter: QueryFilter<IPost> = { ...filter };
+    const pageFilter: QueryFilter<IPost> = { ...filter, ...ACTIVE_POST };
 
     if (page.cursor) {
         pageFilter.createdAt = { $lt: page.cursor };

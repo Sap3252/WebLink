@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import mongoose from "mongoose";
-import Post from "../models/Post.js";
+import Post, { ACTIVE_POST } from "../models/Post.js";
 import { PUBLIC_USER_FIELDS } from "../models/User.js";
 import { findPostsPage, withLinkedByMe } from "../services/post.service.js";
 import { parseCursorParams } from "../utils/pagination.js";
@@ -34,12 +34,25 @@ export async function getPost(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    const post = await Post.findById(id).populate("author", PUBLIC_USER_FIELDS);
+    const post = await Post.findById(id);
 
     if (!post) {
         res.status(404).json({ error: "Post not found" });
         return;
     }
+
+    if (post.deletedAt) {
+        // A deleted post only says that it existed: no text, no author.
+        res.json({
+            _id: post._id,
+            deleted: true,
+            createdAt: post.createdAt,
+            deletedAt: post.deletedAt,
+        });
+        return;
+    }
+
+    await post.populate("author", PUBLIC_USER_FIELDS);
 
     const [postWithLink] = await withLinkedByMe([post], req.userId);
     res.json(postWithLink);
@@ -60,7 +73,7 @@ export async function deletePost(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    const post = await Post.findById(id);
+    const post = await Post.findOne({ _id: id, ...ACTIVE_POST });
 
     if (!post) {
         res.status(404).json({ error: "Post not found" });
@@ -72,7 +85,9 @@ export async function deletePost(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    await post.deleteOne();
+    // Soft delete: mark the date and wipe the content. updateOne skips validation,
+    // so the post can be saved without text.
+    await Post.updateOne({ _id: id }, { $set: { deletedAt: new Date() }, $unset: { text: 1 } });
     res.status(204).send();
 }
 

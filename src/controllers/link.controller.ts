@@ -30,10 +30,15 @@ export async function linkPost(req: Request, res: Response): Promise<void> {
         return;
     }
 
-    const post = await Post.exists({ _id: id });
+    const post = await Post.findById(id).select("deletedAt").lean();
 
     if (!post) {
         res.status(404).json({ error: "Post not found" });
+        return;
+    }
+
+    if (post.deletedAt) {
+        res.status(409).json({ error: "This post was deleted" });
         return;
     }
 
