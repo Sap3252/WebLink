@@ -1,9 +1,54 @@
 import type { Request, Response } from "express";
 import mongoose from "mongoose";
 import Follow from "../models/Follow.js";
-import User, { PUBLIC_USER_FIELDS } from "../models/User.js";
+import User, { PUBLIC_USER_FIELDS, USERNAME_MAX_LENGTH } from "../models/User.js";
 import { findPostsPage } from "../services/post.service.js";
+import { escapeRegex } from "../utils/escapeRegex.js";
 import { parseCursorParams } from "../utils/pagination.js";
+
+const SEARCH_LIMIT = 10;
+
+// GET /users?q=text: users whose username starts with the text come first, then those
+// that contain it anywhere. Case-insensitive.
+export async function searchUsers(req: Request, res: Response): Promise<void> {
+    const { q } = req.query;
+
+    if (typeof q !== "string" || q.trim().length === 0) {
+        res.status(400).json({ error: "q is required" });
+        return;
+    }
+
+    const term = q.trim();
+
+    if (term.length > USERNAME_MAX_LENGTH) {
+        res.status(400).json({ error: "q is too long" });
+        return;
+    }
+
+    const pattern = escapeRegex(term);
+
+    const startsWith = await User.find({ username: { $regex: `^${pattern}`, $options: "i" } })
+        .select(PUBLIC_USER_FIELDS)
+        .sort({ username: 1 })
+        .limit(SEARCH_LIMIT)
+        .lean();
+
+    const remaining = SEARCH_LIMIT - startsWith.length;
+
+    const contains =
+        remaining > 0
+            ? await User.find({
+                  username: { $regex: pattern, $options: "i" },
+                  _id: { $nin: startsWith.map((user) => user._id) },
+              })
+                  .select(PUBLIC_USER_FIELDS)
+                  .sort({ username: 1 })
+                  .limit(remaining)
+                  .lean()
+            : [];
+
+    res.json({ users: [...startsWith, ...contains] });
+}
 
 export async function followUser(req: Request, res: Response): Promise<void> {
     const follower = req.userId;

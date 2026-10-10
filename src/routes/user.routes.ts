@@ -5,6 +5,7 @@ import {
     getUserPosts,
     getUserProfile,
     getFollowers,
+    searchUsers,
     unfollowUser,
     updateMe,
 } from "../controllers/user.controller.js";
@@ -13,6 +14,7 @@ import { optionalAuth } from "../middlewares/optionalAuth.js";
 
 const router = Router();
 
+router.get("/", searchUsers);
 router.patch("/me", requireAuth, updateMe);
 router.get("/:username", optionalAuth, getUserProfile);
 router.get("/:username/posts", optionalAuth, getUserPosts);

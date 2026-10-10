@@ -13,6 +13,7 @@ const en = {
     "theme.toLight": "Switch to light mode",
     "nav.logout": "Log out",
     "nav.profile": "Your profile",
+    "nav.search": "Search people",
 
     "fields.username": "Username",
     "fields.email": "Email",
@@ -84,6 +85,12 @@ const en = {
     "profile.posts": "Posts",
     "profile.empty": "No posts yet.",
 
+    "search.title": "Search people",
+    "search.label": "Search by username",
+    "search.placeholder": "Search by username...",
+    "search.hint": "Type a username to find people.",
+    "search.searching": "Searching...",
+    "search.empty": 'No one matches "{query}".',
     "errors.network": "Could not connect to the server",
     "errors.invalidCredentials": "Invalid email or password",
     "errors.usernameTaken": "That username is already in use",
@@ -106,6 +113,7 @@ const es: Record<TranslationKey, string> = {
     "theme.toLight": "Cambiar a modo claro",
     "nav.logout": "Cerrar sesión",
     "nav.profile": "Tu perfil",
+    "nav.search": "Buscar personas",
 
     "fields.username": "Nombre de usuario",
     "fields.email": "Email",
@@ -177,6 +185,12 @@ const es: Record<TranslationKey, string> = {
     "profile.posts": "Posts",
     "profile.empty": "Todavía no hay posts.",
 
+    "search.title": "Buscar personas",
+    "search.label": "Buscar por nombre de usuario",
+    "search.placeholder": "Buscá por nombre de usuario...",
+    "search.hint": "Escribí un nombre de usuario para encontrar personas.",
+    "search.searching": "Buscando...",
+    "search.empty": 'No encontramos a nadie con "{query}".',
     "errors.network": "No se pudo conectar con el servidor",
     "errors.invalidCredentials": "Email o contraseña incorrectos",
     "errors.usernameTaken": "Ese nombre de usuario ya está en uso",
