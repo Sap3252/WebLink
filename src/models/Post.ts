@@ -60,6 +60,8 @@ const postSchema = new Schema<IPost>(
 );
 
 postSchema.index({ author: 1, createdAt: -1 });
+// "All posts": active posts (deletedAt null), newest first, without sorting in memory.
+postSchema.index({ deletedAt: 1, createdAt: -1 });
 
 const Post: Model<IPost> = model<IPost>("Post", postSchema);
 

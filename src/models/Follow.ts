@@ -27,6 +27,9 @@ const followSchema = new Schema<IFollow>(
 );
 
 followSchema.index({ follower: 1, following: 1 }, { unique: true });
+// The unique index starts with `follower`, so it can't serve queries by `following`
+// alone: counting a user's followers and listing them, newest first.
+followSchema.index({ following: 1, createdAt: -1 });
 
 followSchema.pre("validate", function () {
     if (this.follower.equals(this.following)) {

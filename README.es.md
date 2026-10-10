@@ -84,14 +84,15 @@ npm install --prefix client
 
 Copiar `.env.example` como `.env` en la raíz del proyecto y completarlo:
 
-| Variable         | Obligatoria | Valor por defecto                             | Descripción                                                |
-| ---------------- | ----------- | --------------------------------------------- | ---------------------------------------------------------- |
-| `MONGO_URI`      | Sí          |                                               | Connection string de MongoDB                               |
-| `JWT_SECRET`     | Sí          |                                               | Secreto para firmar los tokens                             |
-| `JWT_EXPIRES_IN` | No          | `7d`                                          | Duración de los tokens                                     |
-| `PORT`           | No          | `3000`                                        | Puerto de la API                                           |
-| `CORS_ORIGIN`    | No          | `http://localhost:5173,http://localhost:4173` | Orígenes autorizados a llamar a la API, separados por coma |
-| `NODE_ENV`       | No          | `development`                                 | Entorno                                                    |
+| Variable              | Obligatoria | Valor por defecto                             | Descripción                                                          |
+| --------------------- | ----------- | --------------------------------------------- | -------------------------------------------------------------------- |
+| `MONGO_URI`           | Sí          |                                               | Connection string de MongoDB                                         |
+| `MONGO_MAX_POOL_SIZE` | No          | `20`                                          | Máximo de conexiones abiertas de cada servidor de la API con MongoDB |
+| `JWT_SECRET`          | Sí          |                                               | Secreto para firmar los tokens                                       |
+| `JWT_EXPIRES_IN`      | No          | `7d`                                          | Duración de los tokens                                               |
+| `PORT`                | No          | `3000`                                        | Puerto de la API                                                     |
+| `CORS_ORIGIN`         | No          | `http://localhost:5173,http://localhost:4173` | Orígenes autorizados a llamar a la API, separados por coma           |
+| `NODE_ENV`            | No          | `development`                                 | Entorno                                                              |
 
 Después copiar `client/.env.example` como `client/.env`. Contiene `VITE_API_URL`, la URL base de la API (`http://localhost:3000/api` por defecto).
 
