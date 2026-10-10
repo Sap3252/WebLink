@@ -1,0 +1,38 @@
+# Render Blueprint: creates the API and the client from this repository.
+# Values marked "sync: false" are asked for in the Render dashboard (they are secrets
+# or depend on the URLs Render assigns), so they never live in the repo.
+services:
+    # API (Express): https://<name>.onrender.com
+    - type: web
+      name: weblink-api
+      runtime: node
+      plan: free
+      # Dev dependencies (TypeScript) are needed to compile, even with NODE_ENV=production.
+      buildCommand: npm ci --include=dev && npm run build
+      startCommand: npm start
+      healthCheckPath: /health
+      envVars:
+          - key: NODE_ENV
+            value: production
+          - key: MONGO_URI
+            sync: false
+          - key: JWT_SECRET
+            generateValue: true
+          - key: CORS_ORIGIN
+            sync: false
+
+    # Client (React, static files)
+    - type: web
+      name: weblink
+      runtime: static
+      rootDir: client
+      buildCommand: npm ci && npm run build
+      staticPublishPath: dist
+      envVars:
+          - key: VITE_API_URL
+            sync: false
+      # Single page app: every route (/p/:id, /u/:username...) is served by index.html.
+      routes:
+          - type: rewrite
+            source: /*
+            destination: /index.html
