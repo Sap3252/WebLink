@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { Avatar } from "../components/Avatar";
 import { getErrorMessage } from "../i18n/errors";
 import { useTranslation } from "../i18n/useTranslation";
+import { imageSrcSet, imageUrl } from "../lib/images";
 import type { Post } from "../lib/types";
 import { useConfirmedDelete } from "../lib/useConfirmedDelete";
 import { CommentIcon } from "./CommentIcon";
@@ -61,7 +62,22 @@ export function PostCard({ post, enterIndex, onDelete, showCommentsLink = true }
                         <time dateTime={post.createdAt}>{date}</time>
                     </Link>
                 </header>
-                <p className={styles.text}>{post.text}</p>
+                {post.text && <p className={styles.text}>{post.text}</p>}
+                {post.image && (
+                    // width and height reserve the photo's space before it loads,
+                    // so the list doesn't jump. Cloudinary serves the size that fits.
+                    <img
+                        className={styles.image}
+                        src={imageUrl(post.image.url, 800)}
+                        srcSet={imageSrcSet(post.image.url, post.image.width)}
+                        sizes="(max-width: 640px) 90vw, 560px"
+                        width={post.image.width}
+                        height={post.image.height}
+                        alt={post.image.alt}
+                        loading="lazy"
+                        decoding="async"
+                    />
+                )}
                 <footer className={styles.footer}>
                     <div className={styles.actions}>
                         <LinkButton post={post} />
