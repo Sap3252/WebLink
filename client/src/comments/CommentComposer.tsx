@@ -1,4 +1,4 @@
-import { Composer } from "../components/Composer";
+import { Composer, type ComposerContent } from "../components/Composer";
 import { useTranslation } from "../i18n/useTranslation";
 import { api } from "../lib/api";
 import type { Comment } from "../lib/types";
@@ -11,7 +11,7 @@ interface CommentComposerProps {
 export function CommentComposer({ postId, onPublished }: CommentComposerProps) {
     const { t } = useTranslation();
 
-    async function publish(text: string) {
+    async function publish({ text }: ComposerContent) {
         const comment = await api<Comment>(`/posts/${postId}/comments`, {
             method: "POST",
             body: { text },

@@ -20,6 +20,21 @@ if (!Number.isInteger(mongoMaxPoolSize) || mongoMaxPoolSize <= 0) {
     throw new Error(`Invalid MONGO_MAX_POOL_SIZE: ${process.env.MONGO_MAX_POOL_SIZE}`);
 }
 
+// Image uploads (Cloudinary). Optional: without these three variables the API still runs
+// and answers 503 when someone tries to upload a photo.
+const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
+const cloudinaryApiKey = process.env.CLOUDINARY_API_KEY;
+const cloudinaryApiSecret = process.env.CLOUDINARY_API_SECRET;
+
+const cloudinary =
+    cloudinaryCloudName && cloudinaryApiKey && cloudinaryApiSecret
+        ? {
+              cloudName: cloudinaryCloudName,
+              apiKey: cloudinaryApiKey,
+              apiSecret: cloudinaryApiSecret,
+          }
+        : null;
+
 // Comma-separated list, e.g. the Vite dev server (5173) and `vite preview` (4173).
 const DEFAULT_CORS_ORIGINS = "http://localhost:5173,http://localhost:4173";
 
@@ -36,4 +51,5 @@ export const env = {
     jwtSecret: required("JWT_SECRET"),
     jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "7d",
     corsOrigins,
+    cloudinary,
 } as const;

@@ -20,6 +20,13 @@ services:
             generateValue: true
           - key: CORS_ORIGIN
             sync: false
+          # Photo uploads. Without these the API still works, it just can't upload photos.
+          - key: CLOUDINARY_CLOUD_NAME
+            sync: false
+          - key: CLOUDINARY_API_KEY
+            sync: false
+          - key: CLOUDINARY_API_SECRET
+            sync: false
 
     # Client (React, static files)
     - type: web

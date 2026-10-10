@@ -41,6 +41,11 @@ const en = {
     "composer.publish": "Post",
     "composer.publishing": "Posting...",
     "composer.remaining": "{count} characters left",
+    "composer.addImage": "Add photo",
+    "composer.changeImage": "Change photo",
+    "composer.removeImage": "Remove photo",
+    "composer.altLabel": "Photo description, for screen readers",
+    "composer.altPlaceholder": "Describe the photo for people who can't see it (optional)",
 
     "posts.loadMore": "Load more",
     "posts.delete": "Delete",
@@ -102,6 +107,13 @@ const en = {
     "errors.postDeleted": "This post was deleted",
     "errors.postNotFound": "This post doesn't exist",
     "errors.commentNotFound": "This comment doesn't exist",
+    "errors.imageType": "Use a JPG, PNG, WebP or GIF image",
+    "errors.imageTooLarge": "The photo can't be larger than 5 MB",
+    "errors.uploadFailed": "Couldn't upload the photo",
+    "errors.invalidImage": "That photo can't be used",
+    "errors.imageAlreadyUsed": "That photo is already in another post",
+    "errors.uploadsDisabled": "Photo uploads aren't available",
+    "errors.altTooLong": "The description can't be longer than 300 characters",
 };
 
 export type TranslationKey = keyof typeof en;
@@ -141,6 +153,11 @@ const es: Record<TranslationKey, string> = {
     "composer.publish": "Publicar",
     "composer.publishing": "Publicando...",
     "composer.remaining": "Quedan {count} caracteres",
+    "composer.addImage": "Agregar foto",
+    "composer.changeImage": "Cambiar foto",
+    "composer.removeImage": "Quitar foto",
+    "composer.altLabel": "Descripción de la foto, para lectores de pantalla",
+    "composer.altPlaceholder": "Describí la foto para quien no puede verla (opcional)",
 
     "posts.loadMore": "Cargar más",
     "posts.delete": "Borrar",
@@ -202,6 +219,13 @@ const es: Record<TranslationKey, string> = {
     "errors.postDeleted": "Este post fue eliminado",
     "errors.postNotFound": "Este post no existe",
     "errors.commentNotFound": "Este comentario no existe",
+    "errors.imageType": "Usá una imagen JPG, PNG, WebP o GIF",
+    "errors.imageTooLarge": "La foto no puede pesar más de 5 MB",
+    "errors.uploadFailed": "No se pudo subir la foto",
+    "errors.invalidImage": "No se pudo usar esa foto",
+    "errors.imageAlreadyUsed": "Esa foto ya está en otro post",
+    "errors.uploadsDisabled": "La subida de fotos no está disponible",
+    "errors.altTooLong": "La descripción no puede pasar los 300 caracteres",
 };
 
 export const translations: Record<Language, Record<TranslationKey, string>> = { en, es };

@@ -98,6 +98,19 @@
     overflow-wrap: anywhere;
 }
 
+/* width/height come from the HTML attributes, so the space is reserved before the photo
+   loads. Very tall photos are cropped to a maximum height instead of filling the screen. */
+.image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 32rem;
+    margin-top: 0.6rem;
+    border-radius: var(--radius-sm);
+    background: var(--field-bg);
+    object-fit: cover;
+}
+
 .footer {
     display: flex;
     align-items: center;

@@ -15,6 +15,12 @@ const API_ERROR_KEYS: Record<string, TranslationKey> = {
     "This post was deleted": "errors.postDeleted",
     "Post not found": "errors.postNotFound",
     "Comment not found": "errors.commentNotFound",
+    "Upload failed": "errors.uploadFailed",
+    "Invalid image": "errors.invalidImage",
+    "Image is too large": "errors.imageTooLarge",
+    "Image already used in another post": "errors.imageAlreadyUsed",
+    "Image uploads are not configured": "errors.uploadsDisabled",
+    "Image description is too long": "errors.altTooLong",
 };
 
 export function getErrorMessage(error: unknown, t: TranslateFn): string {

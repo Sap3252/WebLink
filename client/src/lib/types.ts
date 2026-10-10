@@ -18,9 +18,19 @@ export interface PublicUser {
     bio: string;
 }
 
+export interface PostImage {
+    publicId: string;
+    url: string;
+    width: number;
+    height: number;
+    alt: string;
+}
+
 export interface Post {
     _id: string;
-    text: string;
+    // A post can have only a photo, so the text may be missing.
+    text?: string;
+    image: PostImage | null;
     author: PublicUser;
     linksCount: number;
     linkedByMe: boolean;

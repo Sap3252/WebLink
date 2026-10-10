@@ -2,11 +2,11 @@
 
 **English** | [Español](README.es.md)
 
-A small social network: users publish short posts (up to 250 characters), follow each other, give posts a **link** (WebLink's take on a like) and talk about them in the comments.
+A small social network: users publish short posts (up to 250 characters) with an optional photo, follow each other, give posts a **link** (WebLink's take on a like) and talk about them in the comments.
 
 Built as a learning project, with a REST API in Express + MongoDB and a React client.
 
-> **Status:** the API and the React client are complete. Next step: deployment.
+> **Status:** live at [weblink-45tw.onrender.com](https://weblink-45tw.onrender.com), deployed on Render. The free plan sleeps after 15 minutes without visits, so the first request can take about a minute.
 
 ## Tech stack
 
@@ -22,10 +22,12 @@ Built as a learning project, with a REST API in Express + MongoDB and a React cl
 
 - Sign up and log in with JWT. Passwords are hashed with bcrypt and never returned by the API. When a session expires, the app sends you back to the login page.
 - Posts of up to 250 characters, and a personalized feed with your posts and those of the users you follow.
+- **Photos**: one per post, with an optional description for screen readers. They go straight from the browser to Cloudinary and are stored without metadata, so a phone photo doesn't reveal where it was taken.
 - **Links**: give a post a link, the WebLink version of a like.
 - **Comments** on each post's own page. A comment can be deleted by its author or by the author of the post.
 - Follow and unfollow users. Profiles show follower counts, the user's posts and an editable bio.
-- **Soft delete**: a deleted post disappears from every list and its text is wiped, but its comments stay visible and the conversation is closed.
+- **Search** profiles by username.
+- **Soft delete**: a deleted post disappears from every list and its text and photo are wiped, but its comments stay visible and the conversation is closed.
 
 **Interface**
 
@@ -58,6 +60,7 @@ WebLink/
         ├── posts/        # Post cards, lists, composer and links
         ├── comments/     # Comment list and composer
         ├── profile/      # Profile header, follow button, bio editor
+        ├── search/       # Profile search
         ├── components/   # Shared UI (layout, avatar, logo, forms)
         ├── i18n/         # English and Spanish texts
         ├── theme/        # Light and dark theme
@@ -84,15 +87,20 @@ npm install --prefix client
 
 Copy `.env.example` to `.env` in the project root and fill it in:
 
-| Variable              | Required | Default                                       | Description                                          |
-| --------------------- | -------- | --------------------------------------------- | ---------------------------------------------------- |
-| `MONGO_URI`           | Yes      |                                               | MongoDB connection string                            |
-| `MONGO_MAX_POOL_SIZE` | No       | `20`                                          | Max open connections from each API server to MongoDB |
-| `JWT_SECRET`          | Yes      |                                               | Secret used to sign tokens                           |
-| `JWT_EXPIRES_IN`      | No       | `7d`                                          | Token lifetime                                       |
-| `PORT`                | No       | `3000`                                        | API port                                             |
-| `CORS_ORIGIN`         | No       | `http://localhost:5173,http://localhost:4173` | Origins allowed to call the API, comma-separated     |
-| `NODE_ENV`            | No       | `development`                                 | Environment                                          |
+| Variable                | Required | Default                                       | Description                                          |
+| ----------------------- | -------- | --------------------------------------------- | ---------------------------------------------------- |
+| `MONGO_URI`             | Yes      |                                               | MongoDB connection string                            |
+| `MONGO_MAX_POOL_SIZE`   | No       | `20`                                          | Max open connections from each API server to MongoDB |
+| `JWT_SECRET`            | Yes      |                                               | Secret used to sign tokens                           |
+| `JWT_EXPIRES_IN`        | No       | `7d`                                          | Token lifetime                                       |
+| `PORT`                  | No       | `3000`                                        | API port                                             |
+| `CORS_ORIGIN`           | No       | `http://localhost:5173,http://localhost:4173` | Origins allowed to call the API, comma-separated     |
+| `NODE_ENV`              | No       | `development`                                 | Environment                                          |
+| `CLOUDINARY_CLOUD_NAME` | No       |                                               | Cloudinary cloud name, for photo uploads             |
+| `CLOUDINARY_API_KEY`    | No       |                                               | Cloudinary API key                                   |
+| `CLOUDINARY_API_SECRET` | No       |                                               | Cloudinary API secret                                |
+
+The three `CLOUDINARY_*` variables come from a free [Cloudinary](https://cloudinary.com) account. Without them everything works except uploading photos.
 
 Then copy `client/.env.example` to `client/.env`. It contains `VITE_API_URL`, the API base URL (`http://localhost:3000/api` by default).
 
@@ -139,14 +147,14 @@ All endpoints are under `/api`. In the **Auth** column, **required** means the h
 
 ### Posts
 
-| Method | Endpoint          | Auth     | Description                                                                        |
-| ------ | ----------------- | -------- | ---------------------------------------------------------------------------------- |
-| POST   | `/posts`          | required | Create a post. Body: `text`                                                        |
-| GET    | `/posts`          | optional | All posts, newest first (paginated)                                                |
-| GET    | `/posts/:id`      | optional | A single post. A deleted post returns `{ _id, deleted: true, commentsCount, ... }` |
-| DELETE | `/posts/:id`      | required | Delete one of your posts (soft delete: the text is wiped, the comments stay)       |
-| POST   | `/posts/:id/link` | required | Give the post a link. Returns `{ linksCount, linkedByMe }`                         |
-| DELETE | `/posts/:id/link` | required | Remove your link. Returns `{ linksCount, linkedByMe }`                             |
+| Method | Endpoint          | Auth     | Description                                                                         |
+| ------ | ----------------- | -------- | ----------------------------------------------------------------------------------- |
+| POST   | `/posts`          | required | Create a post. Body: `text` and/or `image: { publicId, alt }` (see Uploads)         |
+| GET    | `/posts`          | optional | All posts, newest first (paginated)                                                 |
+| GET    | `/posts/:id`      | optional | A single post. A deleted post returns `{ _id, deleted: true, commentsCount, ... }`  |
+| DELETE | `/posts/:id`      | required | Delete one of your posts (soft delete: text and photo are wiped, the comments stay) |
+| POST   | `/posts/:id/link` | required | Give the post a link. Returns `{ linksCount, linkedByMe }`                          |
+| DELETE | `/posts/:id/link` | required | Remove your link. Returns `{ linksCount, linkedByMe }`                              |
 
 A post looks like this:
 
@@ -154,6 +162,13 @@ A post looks like this:
 {
     "_id": "...",
     "text": "Hello WebLink",
+    "image": {
+        "publicId": "weblink/posts/<userId>/abc123",
+        "url": "https://res.cloudinary.com/...",
+        "width": 1200,
+        "height": 800,
+        "alt": "A sunset over the sea"
+    },
     "author": { "_id": "...", "username": "santi", "bio": "" },
     "linksCount": 3,
     "linkedByMe": true,
@@ -164,7 +179,19 @@ A post looks like this:
 }
 ```
 
-`linkedByMe` is always `false` without a token.
+`linkedByMe` is always `false` without a token. `text` is missing in posts that only have a photo, and `image` is `null` in posts without one.
+
+### Uploads
+
+Photos go from the browser straight to Cloudinary, so the API never handles the file:
+
+1. `POST /uploads/signature` returns a short-lived signature.
+2. The browser uploads the photo to Cloudinary with it and gets a `publicId`.
+3. `POST /posts` with `image: { publicId, alt }`. The API checks that the photo exists, belongs to the author, isn't used by another post and isn't larger than 5 MB.
+
+| Method | Endpoint             | Auth     | Description                                                                        |
+| ------ | -------------------- | -------- | ---------------------------------------------------------------------------------- |
+| POST   | `/uploads/signature` | required | Signature to upload one photo (JPG, PNG, WebP or GIF). 503 if Cloudinary isn't set |
 
 ### Comments
 
@@ -176,15 +203,16 @@ A post looks like this:
 
 ### Users
 
-| Method | Endpoint                 | Auth     | Description                                                                      |
-| ------ | ------------------------ | -------- | -------------------------------------------------------------------------------- |
-| GET    | `/users/:username`       | optional | Profile with `followers`, `following` and `isFollowing` (`null` without a token) |
-| GET    | `/users/:username/posts` | optional | Posts of a user (paginated)                                                      |
-| PATCH  | `/users/me`              | required | Update your `username` and/or `bio`                                              |
-| GET    | `/users/:id/followers`   |          | Users that follow this user                                                      |
-| GET    | `/users/:id/following`   |          | Users this user follows                                                          |
-| POST   | `/users/:id/follow`      | required | Follow a user                                                                    |
-| DELETE | `/users/:id/follow`      | required | Unfollow a user                                                                  |
+| Method | Endpoint                 | Auth     | Description                                                                                 |
+| ------ | ------------------------ | -------- | ------------------------------------------------------------------------------------------- |
+| GET    | `/users?q=text`          |          | Search by username: names starting with the text first, then those containing it (up to 10) |
+| GET    | `/users/:username`       | optional | Profile with `followers`, `following` and `isFollowing` (`null` without a token)            |
+| GET    | `/users/:username/posts` | optional | Posts of a user (paginated)                                                                 |
+| PATCH  | `/users/me`              | required | Update your `username` and/or `bio`                                                         |
+| GET    | `/users/:id/followers`   |          | Users that follow this user                                                                 |
+| GET    | `/users/:id/following`   |          | Users this user follows                                                                     |
+| POST   | `/users/:id/follow`      | required | Follow a user                                                                               |
+| DELETE | `/users/:id/follow`      | required | Unfollow a user                                                                             |
 
 ### Feed
 
@@ -213,5 +241,7 @@ GET /api/posts?limit=20&before=2026-10-09T12:00:00.000Z
 - [x] Links and comments
 - [x] Soft delete of posts
 - [x] Styling, light and dark theme, English and Spanish
-- [ ] Deployment
-- [ ] Screenshots and live demo link
+- [x] Deployment
+- [x] Profile search
+- [x] Photos in posts
+- [ ] Screenshots

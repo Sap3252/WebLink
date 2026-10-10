@@ -1,8 +1,23 @@
 import { Schema, model, type Model, type HydratedDocument, type Types } from "mongoose";
 
+export const POST_TEXT_MAX_LENGTH = 250;
+export const IMAGE_ALT_MAX_LENGTH = 300;
+
+// A photo stored in Cloudinary. width and height let the client reserve its space
+// before it loads, so the page doesn't jump.
+export interface IPostImage {
+    publicId: string;
+    url: string;
+    width: number;
+    height: number;
+    // Description read by screen readers. Empty when the author didn't write one.
+    alt: string;
+}
+
 export interface IPost {
-    // Removed when the post is deleted.
+    // Optional when the post has a photo. Removed when the post is deleted.
     text?: string;
+    image: IPostImage | null;
     author: Types.ObjectId;
     linksCount: number;
     commentsCount: number;
@@ -19,18 +34,45 @@ export type PostDocument = HydratedDocument<IPost>;
 // deletedAt field existed, because { field: null } matches a missing field too.
 export const ACTIVE_POST = { deletedAt: null };
 
+const postImageSchema = new Schema<IPostImage>(
+    {
+        publicId: { type: String, required: true },
+        url: { type: String, required: true },
+        width: { type: Number, required: true },
+        height: { type: Number, required: true },
+        alt: {
+            type: String,
+            default: "",
+            trim: true,
+            maxlength: [
+                IMAGE_ALT_MAX_LENGTH,
+                `Image description cannot exceed ${IMAGE_ALT_MAX_LENGTH} characters`,
+            ],
+        },
+    },
+    { _id: false },
+);
+
 const postSchema = new Schema<IPost>(
     {
         text: {
             type: String,
+            // An active post needs text, unless it has a photo.
             required: [
                 function (this: IPost) {
-                    return this.deletedAt === null;
+                    return this.deletedAt === null && !this.image;
                 },
                 "Text is required",
             ],
             trim: true,
-            maxlength: [250, "Text cannot exceed 250 characters"],
+            maxlength: [
+                POST_TEXT_MAX_LENGTH,
+                `Text cannot exceed ${POST_TEXT_MAX_LENGTH} characters`,
+            ],
+        },
+        image: {
+            type: postImageSchema,
+            default: null,
         },
         author: {
             type: Schema.Types.ObjectId,
@@ -62,6 +104,11 @@ const postSchema = new Schema<IPost>(
 postSchema.index({ author: 1, createdAt: -1 });
 // "All posts": active posts (deletedAt null), newest first, without sorting in memory.
 postSchema.index({ deletedAt: 1, createdAt: -1 });
+// A photo belongs to a single post. Posts without a photo are left out of the index.
+postSchema.index(
+    { "image.publicId": 1 },
+    { unique: true, partialFilterExpression: { "image.publicId": { $exists: true } } },
+);
 
 const Post: Model<IPost> = model<IPost>("Post", postSchema);
 
