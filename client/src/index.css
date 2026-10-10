@@ -24,6 +24,8 @@
     --warning: #d97706;
 
     --glass-bg: rgba(255, 255, 255, 0.42);
+    /* For the sticky bar: content scrolls behind it, so it needs to cover more. */
+    --glass-bg-strong: rgba(255, 255, 255, 0.78);
     --glass-bg-solid: #f7f5ff;
     --glass-border: rgba(255, 255, 255, 0.8);
     --glass-shadow: 0 8px 32px rgba(76, 52, 160, 0.12);
@@ -52,6 +54,7 @@
     --warning: #fbbf24;
 
     --glass-bg: rgba(32, 26, 66, 0.36);
+    --glass-bg-strong: rgba(24, 19, 52, 0.78);
     --glass-bg-solid: #1b1636;
     --glass-border: rgba(255, 255, 255, 0.12);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
