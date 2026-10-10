@@ -13,6 +13,8 @@ export type UserDocument = HydratedDocument<IUser>;
 
 export const PUBLIC_USER_FIELDS = "username bio";
 
+export const USERNAME_MAX_LENGTH = 30;
+
 const userSchema = new Schema<IUser>(
     {
         username: {
@@ -20,7 +22,10 @@ const userSchema = new Schema<IUser>(
             required: [true, "Username is required"],
             unique: true,
             trim: true,
-            maxlength: [30, "Username cannot exceed 30 characters"],
+            maxlength: [
+                USERNAME_MAX_LENGTH,
+                `Username cannot exceed ${USERNAME_MAX_LENGTH} characters`,
+            ],
         },
         email: {
             type: String,

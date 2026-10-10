@@ -20,6 +20,36 @@
     gap: 0.5rem;
 }
 
+/* Round icon link, same look as the theme button. */
+.iconLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    background: var(--glass-bg);
+    color: var(--text);
+    transition:
+        transform 0.15s var(--ease-out),
+        box-shadow 0.2s;
+}
+
+.iconLink:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--glass-shadow);
+}
+
+.iconLink svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
 .me {
     display: inline-flex;
     border-radius: 50%;

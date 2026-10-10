@@ -100,3 +100,16 @@
         font-size: 1.1rem;
     }
 }
+
+/* Very narrow phones: only the logo icon, so the bar stays on one line.
+   The name is still read by screen readers. */
+@media (max-width: 400px) {
+    .wordmark {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+}

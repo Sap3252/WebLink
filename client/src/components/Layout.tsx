@@ -20,6 +20,17 @@ export function Layout() {
                 <nav className={styles.nav}>
                     <LanguageSwitcher />
                     <ThemeToggle />
+                    <Link
+                        to="/search"
+                        className={styles.iconLink}
+                        aria-label={t("nav.search")}
+                        title={t("nav.search")}
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="10.5" cy="10.5" r="6.5" />
+                            <path d="m20 20-4.8-4.8" />
+                        </svg>
+                    </Link>
                     {user && (
                         <>
                             <Link
