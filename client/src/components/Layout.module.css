@@ -12,6 +12,19 @@
     margin: 0.75rem auto 0;
     padding: 0.5rem 0.75rem 0.5rem 1.1rem;
     border-radius: var(--radius-pill);
+    /* Posts scroll behind the bar, so it uses a more opaque glass and a stronger blur
+       than the cards: the content behind stays readable as a soft shape, never as text,
+       even in browsers where the blur doesn't render. */
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(24px) saturate(170%);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+}
+
+/* Buttons are glass too by default, but a blur inside another blur breaks the outer one
+   in some Chromium versions. Inside the bar they don't need their own. */
+.header button {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
 .nav {
